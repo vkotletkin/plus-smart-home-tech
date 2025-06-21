@@ -24,7 +24,7 @@ import java.time.Instant;
         @JsonSubTypes.Type(value = ScenarioAddedEvent.class, name = "SCENARIO_ADDED"),
         @JsonSubTypes.Type(value = ScenarioRemovedEvent.class, name = "SCENARIO_REMOVED")
 })
-public abstract class HubEvent {
+public abstract sealed class HubEvent permits DeviceAddedEvent, DeviceRemovedEvent, ScenarioRemovedEvent, ScenarioAddedEvent {
 
     private String hubId;
     private Instant timestamp = Instant.now();

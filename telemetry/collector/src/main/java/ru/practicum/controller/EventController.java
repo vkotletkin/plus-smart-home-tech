@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.dto.hub.HubEvent;
 import ru.practicum.dto.sensor.SensorEvent;
+import ru.practicum.service.EventService;
 
 @Slf4j
 @RestController
@@ -15,13 +17,15 @@ import ru.practicum.dto.sensor.SensorEvent;
 @RequiredArgsConstructor
 public class EventController {
 
-    @PostMapping("/sensors")
-    public void addSensorEvent(@Valid @RequestBody SensorEvent sensorEvent) {
+    private final EventService eventService;
 
+    @PostMapping("/sensors")
+    public void collectSensorEvent(@Valid @RequestBody SensorEvent sensorEvent) {
+        eventService.collectSensorEvent(sensorEvent);
     }
 
     @PostMapping("/hubs")
-    public void addHubEvent() {
-
+    public void collectHubEvent(@Valid @RequestBody HubEvent hubEvent) {
+        eventService.collectHubEvent(hubEvent);
     }
 }

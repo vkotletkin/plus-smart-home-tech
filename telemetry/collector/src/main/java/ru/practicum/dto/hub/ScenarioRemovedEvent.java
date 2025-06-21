@@ -12,7 +12,7 @@ import ru.practicum.model.hub.HubEventType;
 @Setter
 @ToString(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ScenarioRemovedEvent extends HubEvent {
+public final class ScenarioRemovedEvent extends HubEvent {
 
     @Min(3)
     String name;

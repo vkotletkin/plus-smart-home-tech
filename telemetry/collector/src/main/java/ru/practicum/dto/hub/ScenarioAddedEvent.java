@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @ToString(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ScenarioAddedEvent extends HubEvent {
+public final class ScenarioAddedEvent extends HubEvent {
 
     @Min(3)
     String name;

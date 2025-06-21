@@ -14,14 +14,3 @@ spring:
     url: jdbc:h2:mem:smarthome-collector;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
     username: smarthome-collector
     password: smarthome-collector
-
-collector:
-  sensors:
-    topic:
-      name: telemetry.sensors.v1
-  hubs:
-    topic:
-      name: telemetry.hubs.v1
-  scenarios:
-    topic:
-      name: telemetry.hubs.v1

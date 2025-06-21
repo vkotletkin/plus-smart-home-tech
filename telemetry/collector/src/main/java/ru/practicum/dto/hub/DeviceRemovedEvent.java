@@ -11,7 +11,7 @@ import ru.practicum.model.hub.HubEventType;
 @Setter
 @ToString(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DeviceRemovedEvent extends HubEvent {
+public final class DeviceRemovedEvent extends HubEvent {
 
     String id;
 
