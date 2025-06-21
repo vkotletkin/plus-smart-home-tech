@@ -1,20 +1,30 @@
 package ru.practicum.service.factory;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;
 import ru.practicum.dto.hub.*;
 import ru.practicum.dto.sensor.*;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AvroMessagesFactory {
 
     public static SpecificRecordBase createAvroHubEvent(HubEvent hubEvent) {
-        SpecificRecordBase specificRecordBase = HubEventAvro.newBuilder()
+        return HubEventAvro.newBuilder()
                 .setHubId(hubEvent.getHubId())
                 .setTimestamp(hubEvent.getTimestamp())
                 .setPayload(processHubEvent(hubEvent))
                 .build();
-        System.out.println(specificRecordBase.toString());
-        return specificRecordBase;
+    }
+
+    public static SpecificRecordBase createAvroSensorEvent(SensorEvent sensorEvent) {
+        return SensorEventAvro.newBuilder()
+                .setId(sensorEvent.getId())
+                .setHubId(sensorEvent.getHubId())
+                .setTimestamp(sensorEvent.getTimestamp())
+                .setPayload(processSensorEvent(sensorEvent))
+                .build();
     }
 
     private static SpecificRecordBase processHubEvent(HubEvent event) {
@@ -35,15 +45,6 @@ public class AvroMessagesFactory {
                     .setName(e.getName())
                     .build();
         };
-    }
-
-    public static SpecificRecordBase createAvroSensorEvent(SensorEvent sensorEvent) {
-        return SensorEventAvro.newBuilder()
-                .setId(sensorEvent.getId())
-                .setHubId(sensorEvent.getHubId())
-                .setTimestamp(sensorEvent.getTimestamp())
-                .setPayload(processSensorEvent(sensorEvent))
-                .build();
     }
 
     private static SpecificRecordBase processSensorEvent(SensorEvent event) {
