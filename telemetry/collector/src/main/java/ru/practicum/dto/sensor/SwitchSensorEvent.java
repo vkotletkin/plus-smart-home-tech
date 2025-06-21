@@ -13,7 +13,7 @@ import ru.practicum.model.sensor.SensorEventType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public final class SwitchSensorEvent extends SensorEvent {
 
-    boolean state;
+    Boolean state;
 
     @Override
     public SensorEventType getType() {

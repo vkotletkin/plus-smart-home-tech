@@ -1,6 +1,7 @@
 package ru.practicum.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -10,6 +11,7 @@ import ru.practicum.dto.sensor.SensorEvent;
 import ru.practicum.service.KafkaProducerService;
 import ru.practicum.service.factory.AvroMessagesFactory;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class KafkaProducerServiceImpl implements KafkaProducerService {

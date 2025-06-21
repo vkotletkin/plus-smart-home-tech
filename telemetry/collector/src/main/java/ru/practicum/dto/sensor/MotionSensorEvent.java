@@ -11,7 +11,7 @@ import ru.practicum.model.sensor.SensorEventType;
 public final class MotionSensorEvent extends SensorEvent {
 
     int linkQuality;
-    boolean motion;
+    Boolean motion;
     int voltage;
 
     @Override

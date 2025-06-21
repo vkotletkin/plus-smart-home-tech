@@ -7,7 +7,17 @@ import ru.yandex.practicum.kafka.telemetry.event.*;
 
 public class AvroMessagesFactory {
 
-    public static SpecificRecordBase createAvroHubEvent(HubEvent event) {
+    public static SpecificRecordBase createAvroHubEvent(HubEvent hubEvent) {
+        SpecificRecordBase specificRecordBase = HubEventAvro.newBuilder()
+                .setHubId(hubEvent.getHubId())
+                .setTimestamp(hubEvent.getTimestamp())
+                .setPayload(processHubEvent(hubEvent))
+                .build();
+        System.out.println(specificRecordBase.toString());
+        return specificRecordBase;
+    }
+
+    private static SpecificRecordBase processHubEvent(HubEvent event) {
         return switch (event) {
             case DeviceAddedEvent e -> DeviceAddedEventAvro.newBuilder()
                     .setId(e.getId())
@@ -18,8 +28,8 @@ public class AvroMessagesFactory {
                     .build();
             case ScenarioAddedEvent e -> ScenarioAddedEventAvro.newBuilder()
                     .setName(e.getName())
-                    .setActions(e.getDeviceActions())
-                    .setConditions(e.getScenarioConditions())
+                    .setActions(e.getActions())
+                    .setConditions(e.getConditions())
                     .build();
             case ScenarioRemovedEvent e -> ScenarioRemovedEventAvro.newBuilder()
                     .setName(e.getName())
@@ -27,7 +37,16 @@ public class AvroMessagesFactory {
         };
     }
 
-    public static SpecificRecordBase createAvroSensorEvent(SensorEvent event) {
+    public static SpecificRecordBase createAvroSensorEvent(SensorEvent sensorEvent) {
+        return SensorEventAvro.newBuilder()
+                .setId(sensorEvent.getId())
+                .setHubId(sensorEvent.getHubId())
+                .setTimestamp(sensorEvent.getTimestamp())
+                .setPayload(processSensorEvent(sensorEvent))
+                .build();
+    }
+
+    private static SpecificRecordBase processSensorEvent(SensorEvent event) {
         return switch (event) {
             case ClimateSensorEvent e -> ClimateSensorAvro.newBuilder()
                     .setTemperatureC(e.getTemperatureC())
@@ -40,11 +59,11 @@ public class AvroMessagesFactory {
                     .build();
             case MotionSensorEvent e -> MotionSensorAvro.newBuilder()
                     .setLinkQuality(e.getLinkQuality())
-                    .setMotion(e.isMotion())
+                    .setMotion(e.getMotion())
                     .setVoltage(e.getVoltage())
                     .build();
             case SwitchSensorEvent e -> SwitchSensorAvro.newBuilder()
-                    .setState(e.isState())
+                    .setState(e.getState())
                     .build();
             case TemperatureSensorEvent e -> TemperatureSensorAvro.newBuilder()
                     .setTimestamp(e.getTimestamp())

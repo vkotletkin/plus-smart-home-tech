@@ -1,7 +1,6 @@
 package ru.practicum.dto.hub;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,14 +18,12 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public final class ScenarioAddedEvent extends HubEvent {
 
-    @Min(3)
+    @NotBlank
     String name;
 
-    @NotNull
-    List<ScenarioConditionAvro> scenarioConditions;
+    List<ScenarioConditionAvro> conditions;
 
-    @NotNull
-    List<DeviceActionAvro> deviceActions;
+    List<DeviceActionAvro> actions;
 
     @Override
     public HubEventType getType() {
