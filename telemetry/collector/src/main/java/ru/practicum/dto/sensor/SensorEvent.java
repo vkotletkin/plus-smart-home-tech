@@ -1,11 +1,11 @@
-package ru.practicum.event.dto.sensor;
+package ru.practicum.dto.sensor;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import ru.practicum.event.model.SensorEventType;
+import ru.practicum.model.sensor.SensorEventType;
 
 import java.time.Instant;
 
