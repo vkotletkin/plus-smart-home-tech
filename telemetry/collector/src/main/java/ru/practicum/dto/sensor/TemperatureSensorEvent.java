@@ -1,17 +1,20 @@
 package ru.practicum.dto.sensor;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.model.sensor.SensorEventType;
 
 @Getter
 @Setter
 @ToString(callSuper = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class TemperatureSensorEvent extends SensorEvent {
 
-    private int temperatuerC;
-    private int temperatuerF;
+    int temperatuerC;
+    int temperatuerF;
 
     @Override
     public SensorEventType getType() {

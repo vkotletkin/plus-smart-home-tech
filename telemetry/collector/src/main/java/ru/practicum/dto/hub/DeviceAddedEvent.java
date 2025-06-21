@@ -11,8 +11,8 @@ import ru.yandex.practicum.kafka.telemetry.event.DeviceTypeAvro;
 @ToString(callSuper = true)
 public class DeviceAddedEvent extends HubEvent {
 
-    private String id;
-    private DeviceTypeAvro deviceType;
+    String id;
+    DeviceTypeAvro deviceType;
 
     @Override
     public HubEventType getType() {

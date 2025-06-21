@@ -10,9 +10,9 @@ import ru.practicum.model.sensor.SensorEventType;
 @ToString(callSuper = true)
 public class MotionSensorEvent extends SensorEvent {
 
-    private int linkQuality;
-    private boolean motion;
-    private int voltage;
+    int linkQuality;
+    boolean motion;
+    int voltage;
 
     @Override
     public SensorEventType getType() {

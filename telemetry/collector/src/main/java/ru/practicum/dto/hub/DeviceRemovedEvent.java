@@ -1,13 +1,19 @@
 package ru.practicum.dto.hub;
 
 import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.model.hub.HubEventType;
 
+@Getter
+@Setter
+@ToString(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DeviceRemovedEvent extends HubEvent {
 
-    private String id;
+    String id;
 
     @Override
     public HubEventType getType() {
