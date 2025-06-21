@@ -8,7 +8,7 @@ import ru.practicum.model.sensor.SensorEventType;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class MotionSensorEvent extends SensorEvent {
+public final class MotionSensorEvent extends SensorEvent {
 
     int linkQuality;
     boolean motion;

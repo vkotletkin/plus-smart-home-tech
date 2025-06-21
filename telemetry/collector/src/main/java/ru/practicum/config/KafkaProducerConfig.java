@@ -17,7 +17,7 @@ public class KafkaProducerConfig {
         Properties config = new Properties();
         config.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         config.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        config.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "ru.practicum.serialization.GeneralAvroSerializer");
+        config.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "ru.practicum.serialization.AvroSerializer");
         return new KafkaProducer<>(config);
     }
 }

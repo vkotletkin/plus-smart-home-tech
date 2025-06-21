@@ -1,4 +1,4 @@
-package ru.practicum.service;
+package ru.practicum.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.avro.specific.SpecificRecordBase;
@@ -7,11 +7,12 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.hub.HubEvent;
 import ru.practicum.dto.sensor.SensorEvent;
+import ru.practicum.service.KafkaProducerService;
 import ru.practicum.service.factory.AvroMessagesFactory;
 
 @Service
 @RequiredArgsConstructor
-public class KafkaProducerServiceImpl {
+public class KafkaProducerServiceImpl implements KafkaProducerService {
 
     private final Producer<String, SpecificRecordBase> producer;
 
@@ -22,6 +23,8 @@ public class KafkaProducerServiceImpl {
     }
 
     public void send(String topic, String key, SensorEvent sensorEvent) {
-
+        SpecificRecordBase sensorEventAvro = AvroMessagesFactory.createAvroSensorEvent(sensorEvent);
+        ProducerRecord<String, SpecificRecordBase> record = new ProducerRecord<>(topic, key, sensorEventAvro);
+        producer.send(record);
     }
 }

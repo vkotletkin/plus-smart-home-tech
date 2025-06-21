@@ -11,7 +11,7 @@ import ru.practicum.model.sensor.SensorEventType;
 @Setter
 @ToString(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TemperatureSensorEvent extends SensorEvent {
+public final class TemperatureSensorEvent extends SensorEvent {
 
     int temperatuerC;
     int temperatuerF;
