@@ -1,5 +1,6 @@
 package ru.practicum.dto.hub;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,6 +14,7 @@ import ru.practicum.model.hub.HubEventType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public final class DeviceRemovedEvent extends HubEvent {
 
+    @NotBlank
     String id;
 
     @Override

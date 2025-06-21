@@ -2,6 +2,7 @@ package ru.practicum.dto.hub;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,7 +27,9 @@ import java.time.Instant;
 })
 public abstract sealed class HubEvent permits DeviceAddedEvent, DeviceRemovedEvent, ScenarioRemovedEvent, ScenarioAddedEvent {
 
+    @NotBlank
     private String hubId;
+
     private Instant timestamp = Instant.now();
 
     public abstract HubEventType getType();
