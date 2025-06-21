@@ -68,8 +68,8 @@ public class AvroMessagesFactory {
                     .build();
             case TemperatureSensorEvent e -> TemperatureSensorAvro.newBuilder()
                     .setTimestamp(e.getTimestamp())
-                    .setTemperatureC(e.getTemperatuerC())
-                    .setTemperatureF(e.getTemperatuerF())
+                    .setTemperatureC(e.getTemperatureC())
+                    .setTemperatureF(e.getTemperatureF())
                     .build();
         };
     }

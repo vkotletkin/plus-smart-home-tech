@@ -13,8 +13,8 @@ import ru.practicum.model.sensor.SensorEventType;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public final class TemperatureSensorEvent extends SensorEvent {
 
-    int temperatuerC;
-    int temperatuerF;
+    int temperatureC;
+    int temperatureF;
 
     @Override
     public SensorEventType getType() {
