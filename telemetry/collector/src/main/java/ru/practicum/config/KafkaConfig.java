@@ -12,6 +12,14 @@ public class KafkaConfig {
 
     private Telemetry telemetry;
 
+    public String getHubTopic() {
+        return this.getTelemetry().getHub().getTopic();
+    }
+
+    public String getSensorTopic() {
+        return this.getTelemetry().getSensor().getTopic();
+    }
+
     @Getter
     @Setter
     @ToString
@@ -41,5 +49,4 @@ public class KafkaConfig {
     public static class Hub {
         private String topic;
     }
-
 }

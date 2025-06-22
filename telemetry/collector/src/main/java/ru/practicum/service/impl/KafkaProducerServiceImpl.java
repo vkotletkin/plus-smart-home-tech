@@ -21,14 +21,14 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     public void send(String topic, String key, HubEvent hubEvent) {
         SpecificRecordBase hubEventAvro = AvroMessagesFactory.createAvroHubEvent(hubEvent);
         ProducerRecord<String, SpecificRecordBase> sendRecord = new ProducerRecord<>(
-                kafkaConfig.getTelemetry().getHub().getTopic(), key, hubEventAvro);
+                kafkaConfig.getHubTopic(), key, hubEventAvro);
         producer.send(sendRecord);
     }
 
     public void send(String topic, String key, SensorEvent sensorEvent) {
         SpecificRecordBase sensorEventAvro = AvroMessagesFactory.createAvroSensorEvent(sensorEvent);
         ProducerRecord<String, SpecificRecordBase> sendRecord = new ProducerRecord<>(
-                kafkaConfig.getTelemetry().getSensor().getTopic(), key, sensorEventAvro);
+                kafkaConfig.getSensorTopic(), key, sensorEventAvro);
         producer.send(sendRecord);
     }
 }
