@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: kafka-test.properties
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    open-in-view: false
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:smarthome-collector;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    username: smarthome-collector
+    password: smarthome-collector
