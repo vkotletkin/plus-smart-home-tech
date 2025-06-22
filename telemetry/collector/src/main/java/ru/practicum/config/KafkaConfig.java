@@ -1,16 +1,18 @@
 package ru.practicum.config;
 
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @Setter
 @ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @ConfigurationProperties(prefix = "spring.collector.kafka")
 public class KafkaConfig {
 
-    private Telemetry telemetry;
+    Telemetry telemetry;
 
     public String getHubTopic() {
         return this.getTelemetry().getHub().getTopic();
@@ -23,30 +25,34 @@ public class KafkaConfig {
     @Getter
     @Setter
     @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class Telemetry {
-        private Bootstrap bootstrap;
-        private Sensor sensor;
-        private Hub hub;
+        Bootstrap bootstrap;
+        Sensor sensor;
+        Hub hub;
     }
 
     @Getter
     @Setter
     @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class Bootstrap {
-        private String servers;
+        String servers;
     }
 
     @Getter
     @Setter
     @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class Sensor {
-        private String topic;
+        String topic;
     }
 
     @Getter
     @Setter
     @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class Hub {
-        private String topic;
+        String topic;
     }
 }

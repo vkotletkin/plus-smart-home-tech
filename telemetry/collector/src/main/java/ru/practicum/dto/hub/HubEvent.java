@@ -3,9 +3,11 @@ package ru.practicum.dto.hub;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.model.hub.HubEventType;
 
 import java.time.Instant;
@@ -25,12 +27,13 @@ import java.time.Instant;
         @JsonSubTypes.Type(value = ScenarioAddedEvent.class, name = "SCENARIO_ADDED"),
         @JsonSubTypes.Type(value = ScenarioRemovedEvent.class, name = "SCENARIO_REMOVED")
 })
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract sealed class HubEvent permits DeviceAddedEvent, DeviceRemovedEvent, ScenarioRemovedEvent, ScenarioAddedEvent {
 
     @NotBlank
-    private String hubId;
+    String hubId;
 
-    private Instant timestamp = Instant.now();
+    Instant timestamp = Instant.now();
 
     public abstract HubEventType getType();
 }

@@ -3,9 +3,11 @@ package ru.practicum.dto.sensor;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.model.sensor.SensorEventType;
 
 import java.time.Instant;
@@ -26,16 +28,17 @@ import java.time.Instant;
         @JsonSubTypes.Type(value = SwitchSensorEvent.class, name = "SWITCH_SENSOR_EVENT"),
         @JsonSubTypes.Type(value = TemperatureSensorEvent.class, name = "TEMPERATURE_SENSOR_EVENT")
 })
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public abstract sealed class SensorEvent permits ClimateSensorEvent, LightSensorEvent, MotionSensorEvent,
         SwitchSensorEvent, TemperatureSensorEvent {
 
     @NotBlank
-    private String id;
+    String id;
 
     @NotBlank
-    private String hubId;
+    String hubId;
 
-    private Instant timestamp = Instant.now();
+    Instant timestamp = Instant.now();
 
     public abstract SensorEventType getType();
 }
