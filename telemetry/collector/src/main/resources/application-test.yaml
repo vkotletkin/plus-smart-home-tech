@@ -14,3 +14,6 @@ spring:
     url: jdbc:h2:mem:smarthome-collector;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
     username: smarthome-collector
     password: smarthome-collector
+grpc:
+  server:
+    port: 59091
