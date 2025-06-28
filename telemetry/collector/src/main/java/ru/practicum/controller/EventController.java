@@ -5,7 +5,6 @@ import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import org.apache.avro.specific.SpecificRecordBase;
 import ru.practicum.service.HubEventHandler;
 import ru.practicum.service.KafkaProducerService;
 import ru.practicum.service.SensorEventHandler;
@@ -45,8 +44,7 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
         try {
             if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
-                SpecificRecordBase specificRecordBase = sensorEventHandlers.get(request.getPayloadCase()).getAvroRecord(request);
-                kafkaProducerService.sendSensor(request.getHubId(), specificRecordBase);
+                kafkaProducerService.sendSensor(request.getHubId(), sensorEventHandlers.get(request.getPayloadCase()).getAvroRecord(request));
             } else {
                 throw new IllegalArgumentException("Not found handler for: " + request.getPayloadCase());
             }
@@ -61,8 +59,7 @@ public class EventController extends CollectorControllerGrpc.CollectorController
     public void collectHubEvent(HubEventProto request, StreamObserver<Empty> responseObserver) {
         try {
             if (hubEventHandlers.containsKey(request.getPayloadCase())) {
-                SpecificRecordBase specificRecordBase = hubEventHandlers.get(request.getPayloadCase()).getAvroRecord(request);
-                kafkaProducerService.sendHub(request.getHubId(), specificRecordBase);
+                kafkaProducerService.sendHub(request.getHubId(), hubEventHandlers.get(request.getPayloadCase()).getAvroRecord(request));
             } else {
                 throw new IllegalArgumentException("Not found handler for: " + request.getPayloadCase());
             }
