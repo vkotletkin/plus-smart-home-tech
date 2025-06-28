@@ -15,9 +15,15 @@ public class KafkaProducerServiceImpl implements KafkaProducerService {
     private final KafkaConfig kafkaConfig;
     private final Producer<String, SpecificRecordBase> producer;
 
-    public void send(String key, SpecificRecordBase recordData) {
+    public void sendHub(String key, SpecificRecordBase recordData) {
         ProducerRecord<String, SpecificRecordBase> sendRecord = new ProducerRecord<>(
                 kafkaConfig.getHubTopic(), key, recordData);
+        producer.send(sendRecord);
+    }
+
+    public void sendSensor(String key, SpecificRecordBase recordData) {
+        ProducerRecord<String, SpecificRecordBase> sendRecord = new ProducerRecord<>(
+                kafkaConfig.getSensorTopic(), key, recordData);
         producer.send(sendRecord);
     }
 }

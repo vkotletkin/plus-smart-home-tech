@@ -4,5 +4,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 
 public interface KafkaProducerService {
 
-    void send(String key, SpecificRecordBase recordBase);
+    void sendHub(String key, SpecificRecordBase recordBase);
+
+    void sendSensor(String key, SpecificRecordBase recordBase);
 }

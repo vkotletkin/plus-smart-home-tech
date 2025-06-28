@@ -1,21 +1,21 @@
-package ru.practicum.service.impl.handler;
+package ru.practicum.service.impl.handler.sensor;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.springframework.stereotype.Component;
 import ru.practicum.service.SensorEventHandler;
-import ru.yandex.practicum.grpc.telemetry.event.ClimateSensorProto;
 import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.yandex.practicum.kafka.telemetry.event.ClimateSensorAvro;
+import ru.yandex.practicum.grpc.telemetry.event.SwitchSensorProto;
 import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SwitchSensorAvro;
 
 import java.time.Instant;
 
 @Component
-public class ClimateSensorEventHandler implements SensorEventHandler {
+public class SwitchSensorEventHandler implements SensorEventHandler {
 
     @Override
     public SensorEventProto.PayloadCase getMessageType() {
-        return SensorEventProto.PayloadCase.CLIMATE_SENSOR_EVENT;
+        return SensorEventProto.PayloadCase.SWITCH_SENSOR_EVENT;
     }
 
     @Override
@@ -29,11 +29,9 @@ public class ClimateSensorEventHandler implements SensorEventHandler {
     }
 
     private SpecificRecordBase getAvroPayload(SensorEventProto event) {
-        ClimateSensorProto climateSensorProto = event.getClimateSensorEvent();
-        return ClimateSensorAvro.newBuilder()
-                .setTemperatureC(climateSensorProto.getTemperatureC())
-                .setHumidity(climateSensorProto.getHumidity())
-                .setCo2Level(climateSensorProto.getCo2Level())
+        SwitchSensorProto switchSensorProto = event.getSwitchSensorEvent();
+        return SwitchSensorAvro.newBuilder()
+                .setState(switchSensorProto.getState())
                 .build();
     }
 }
