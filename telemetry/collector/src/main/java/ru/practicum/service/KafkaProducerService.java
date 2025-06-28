@@ -1,11 +1,8 @@
 package ru.practicum.service;
 
-import ru.practicum.dto.hub.HubEvent;
-import ru.practicum.dto.sensor.SensorEvent;
+import org.apache.avro.specific.SpecificRecordBase;
 
 public interface KafkaProducerService {
 
-    void send(String topic, String key, SensorEvent sensorEvent);
-
-    void send(String topic, String key, HubEvent hubEvent);
+    void send(String key, SpecificRecordBase recordBase);
 }

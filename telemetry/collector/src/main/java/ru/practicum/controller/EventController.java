@@ -1,31 +1,47 @@
 package ru.practicum.controller;
 
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.dto.hub.HubEvent;
-import ru.practicum.dto.sensor.SensorEvent;
-import ru.practicum.service.EventService;
+import com.google.protobuf.Empty;
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
+import ru.practicum.service.KafkaProducerService;
+import ru.practicum.service.SensorEventHandler;
+import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 
-@Slf4j
-@RestController
-@RequestMapping("/events")
-@RequiredArgsConstructor
-public class EventController {
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-    private final EventService eventService;
+@GrpcService
+public class EventController extends CollectorControllerGrpc.CollectorControllerImplBase {
 
-    @PostMapping("/sensors")
-    public void collectSensorEvent(@Valid @RequestBody SensorEvent sensorEvent) {
-        eventService.collectSensorEvent(sensorEvent);
+    private final Map<SensorEventProto.PayloadCase, SensorEventHandler> sensorEventHandlers;
+    private final KafkaProducerService kafkaProducerService;
+
+    public EventController(Set<SensorEventHandler> sensorEventHandlers, KafkaProducerService kafkaProducerService) {
+        this.sensorEventHandlers = sensorEventHandlers.stream()
+                .collect(Collectors.toMap(
+                        SensorEventHandler::getMessageType,
+                        Function.identity()
+                ));
+        this.kafkaProducerService = kafkaProducerService;
     }
 
-    @PostMapping("/hubs")
-    public void collectHubEvent(@Valid @RequestBody HubEvent hubEvent) {
-        eventService.collectHubEvent(hubEvent);
+    @Override
+    public void collectSensorEvent(SensorEventProto request, StreamObserver<Empty> responseObserver) {
+        try {
+            if (sensorEventHandlers.containsKey(request.getPayloadCase())) {
+                kafkaProducerService.send(request.getHubId(), sensorEventHandlers.get(request.getPayloadCase()).getAvroRecord(request));
+            } else {
+                throw new IllegalArgumentException("Not found handler for: " + request.getPayloadCase());
+            }
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(new StatusRuntimeException(Status.fromThrowable(e)));
+        }
     }
 }
