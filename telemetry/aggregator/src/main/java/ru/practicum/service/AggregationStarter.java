@@ -62,7 +62,7 @@ public class AggregationStarter {
         try {
 
             Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
-            consumer.subscribe(List.of(kafkaConfig.getSnapshotTopic()));
+            consumer.subscribe(List.of(kafkaConfig.getSensorTopic()));
 
             while (true) {
 
@@ -72,7 +72,7 @@ public class AggregationStarter {
                 for (ConsumerRecord<String, SensorEventAvro> record : records) {
                     aggregatorSnapshotState.updateState(record.value())
                             .ifPresent(avro ->
-                                    producer.send(new ProducerRecord<>(avro.getHubId(), avro)));
+                                    producer.send(new ProducerRecord<>(kafkaConfig.getSnapshotTopic(), avro.getHubId(), avro)));
                     manageOffsets(record, count, consumer);
                     count++;
                 }

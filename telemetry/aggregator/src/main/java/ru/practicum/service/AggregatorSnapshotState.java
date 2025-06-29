@@ -7,7 +7,6 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -31,8 +30,8 @@ public class AggregatorSnapshotState {
 
         // проверяем на изменение, нужно ли апдейтить
         if (oldSensorState != null
-                && oldSensorState.getTimestamp().isBefore(event.getTimestamp())
-                || event.getPayload().equals(Objects.requireNonNull(oldSensorState).getData())) {
+                && (oldSensorState.getTimestamp().isBefore(event.getTimestamp())
+                || event.getPayload().equals(oldSensorState.getData()))) {
             return Optional.empty();
         }
 
