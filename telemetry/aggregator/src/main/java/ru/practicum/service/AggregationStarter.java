@@ -68,8 +68,14 @@ public class AggregationStarter {
 
                 ConsumerRecords<String, SensorEventAvro> records = consumer.poll(CONSUME_ATTEMPT_TIMEOUT);
 
+                if (records.isEmpty()) continue;
+
                 int count = 0;
                 for (ConsumerRecord<String, SensorEventAvro> record : records) {
+
+                    log.info("topic = {}, partition = {}, offset = {}, record = {}\n",
+                            record.topic(), record.partition(), record.offset(), record.value());
+
                     aggregatorSnapshotState.updateState(record.value())
                             .ifPresent(avro ->
                                     producer.send(new ProducerRecord<>(kafkaConfig.getSnapshotTopic(), avro.getHubId(), avro)));
@@ -77,7 +83,7 @@ public class AggregationStarter {
                     count++;
                 }
 
-                consumer.commitAsync();
+                consumer.commitSync();
             }
 
         } catch (WakeupException ignored) {
@@ -89,7 +95,6 @@ public class AggregationStarter {
             consumer.close();
             log.info("Закрываем продюсер");
             producer.close();
-
         }
     }
 }

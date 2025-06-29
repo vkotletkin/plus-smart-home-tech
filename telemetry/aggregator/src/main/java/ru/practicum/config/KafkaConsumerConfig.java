@@ -21,7 +21,7 @@ public class KafkaConsumerConfig {
         config.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.getTelemetry().getBootstrap().getServers());
         config.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
         config.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "ru.practicum.serialization.SensorEventDeserializer");
-        config.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "aggregator-group");
+        config.setProperty(ConsumerConfig.GROUP_ID_CONFIG, "AggregatorSensorsGroup");
         return new KafkaConsumer<>(config);
     }
 }
