@@ -95,9 +95,6 @@ public class AggregationStarter {
                 producer.flush();
                 log.info("Продюсер сбросил данные из буфера");
 
-                consumer.commitSync();
-                log.info("Финальный коммит смещений выполнен");
-
             } catch (Exception e) {
                 log.error("Ошибка при финальной очистке ресурсов", e);
             } finally {
