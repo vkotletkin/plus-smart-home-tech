@@ -5,6 +5,7 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorStateAvro;
 import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class AggregatorSnapshotState {
         SensorsSnapshotAvro currentSnapshotAvro = sensorsSnapshotAvroMap.getOrDefault(event.getHubId(),
                 SensorsSnapshotAvro.newBuilder()
                         .setHubId(event.getHubId())
-                        .setTimestamp(event.getTimestamp())
+                        .setTimestamp(Instant.now())
                         .setSensorsState(new HashMap<>())
                         .build());
 
@@ -30,7 +31,7 @@ public class AggregatorSnapshotState {
 
         // проверяем на изменение, нужно ли апдейтить
         if (oldSensorState != null
-                && (oldSensorState.getTimestamp().isBefore(event.getTimestamp())
+                && (oldSensorState.getTimestamp().isAfter(event.getTimestamp())
                 || event.getPayload().equals(oldSensorState.getData()))) {
             return Optional.empty();
         }

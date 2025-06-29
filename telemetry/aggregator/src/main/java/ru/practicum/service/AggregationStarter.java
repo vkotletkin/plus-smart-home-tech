@@ -83,7 +83,7 @@ public class AggregationStarter {
                     count++;
                 }
 
-                consumer.commitSync();
+                consumer.commitAsync();
             }
 
         } catch (WakeupException ignored) {
@@ -91,10 +91,31 @@ public class AggregationStarter {
         } catch (Exception e) {
             log.error("Ошибка во время обработки событий от датчиков", e);
         } finally {
-            log.info("Закрываем консьюмер");
-            consumer.close();
-            log.info("Закрываем продюсер");
-            producer.close();
+            try {
+                producer.flush();
+                log.info("Продюсер сбросил данные из буфера");
+
+                consumer.commitSync();
+                log.info("Финальный коммит смещений выполнен");
+
+            } catch (Exception e) {
+                log.error("Ошибка при финальной очистке ресурсов", e);
+            } finally {
+                try {
+                    log.info("Закрытие продюсера...");
+                    producer.close();
+                    log.info("Продюсер успешно закрыт");
+                } catch (Exception e) {
+                    log.error("Ошибка при закрытии продюсера", e);
+                }
+                try {
+                    log.info("Закрытие консьюмера...");
+                    consumer.close();
+                    log.info("Консьюмер успешно закрыт");
+                } catch (Exception e) {
+                    log.error("Ошибка при закрытии консьюмера", e);
+                }
+            }
         }
     }
 }
