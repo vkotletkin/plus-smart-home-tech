@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Класс AggregationStarter, ответственный за запуск агрегации данных.
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -46,71 +43,52 @@ public class AggregationStarter {
         if (count % 10 == 0) {
             consumer.commitAsync(currentOffsets, (offsets, exception) -> {
                 if (exception != null) {
-                    log.warn("Ошибка во время фиксации оффсетов: {}", offsets, exception);
+                    log.warn("Error in offset fixing: {}", offsets, exception);
                 }
             });
         }
     }
 
-    /**
-     * Метод для начала процесса агрегации данных.
-     * Подписывается на топики для получения событий от датчиков,
-     * формирует снимок их состояния и записывает в кафку.
-     */
     public void start() {
 
         try {
-
             Runtime.getRuntime().addShutdownHook(new Thread(consumer::wakeup));
             consumer.subscribe(List.of(kafkaConfig.getSensorTopic()));
 
             while (true) {
 
                 ConsumerRecords<String, SensorEventAvro> records = consumer.poll(CONSUME_ATTEMPT_TIMEOUT);
-
                 if (records.isEmpty()) continue;
 
                 int count = 0;
                 for (ConsumerRecord<String, SensorEventAvro> record : records) {
-
-                    log.info("topic = {}, partition = {}, offset = {}, record = {}\n",
-                            record.topic(), record.partition(), record.offset(), record.value());
-
                     aggregatorSnapshotState.updateState(record.value())
                             .ifPresent(avro ->
                                     producer.send(new ProducerRecord<>(kafkaConfig.getSnapshotTopic(), avro.getHubId(), avro)));
                     manageOffsets(record, count, consumer);
                     count++;
                 }
-
                 consumer.commitAsync();
             }
 
         } catch (WakeupException ignored) {
-            // игнорируем - закрываем консьюмер и продюсер в блоке finally
         } catch (Exception e) {
-            log.error("Ошибка во время обработки событий от датчиков", e);
+            log.error("Error in processing events from sensors", e);
         } finally {
             try {
                 producer.flush();
-                log.info("Продюсер сбросил данные из буфера");
+                log.info("Producer buffer is flushed");
 
             } catch (Exception e) {
-                log.error("Ошибка при финальной очистке ресурсов", e);
+                log.error("Exception on finally producer flushing", e);
             } finally {
                 try {
-                    log.info("Закрытие продюсера...");
                     producer.close();
-                    log.info("Продюсер успешно закрыт");
-                } catch (Exception e) {
-                    log.error("Ошибка при закрытии продюсера", e);
-                }
-                try {
-                    log.info("Закрытие консьюмера...");
+                    log.info("Producer closed");
                     consumer.close();
-                    log.info("Консьюмер успешно закрыт");
+                    log.info("Consumer closed");
                 } catch (Exception e) {
-                    log.error("Ошибка при закрытии консьюмера", e);
+                    log.error("Error on producer/consumer closing", e);
                 }
             }
         }
