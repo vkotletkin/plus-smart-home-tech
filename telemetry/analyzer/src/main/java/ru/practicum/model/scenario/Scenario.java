@@ -1,4 +1,4 @@
-package ru.practicum.model;
+package ru.practicum.model.scenario;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,10 +7,12 @@ import lombok.experimental.FieldDefaults;
 @Data
 @Entity
 @Builder
-@Table(name = "scenarios")
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Table(name = "scenarios", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"hub_id", "name"})
+})
 public class Scenario {
 
     @Id

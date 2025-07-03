@@ -1,6 +1,9 @@
 package ru.practicum.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,8 +17,8 @@ import lombok.experimental.FieldDefaults;
 public class Sensor {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @Column(name = "id")
+    String id;
 
     @Column(name = "hub_id")
     String hubId;
