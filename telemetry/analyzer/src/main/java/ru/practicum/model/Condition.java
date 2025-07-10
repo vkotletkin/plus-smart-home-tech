@@ -3,29 +3,39 @@ package ru.practicum.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.model.enums.ScenarioConditionType;
+import ru.yandex.practicum.kafka.telemetry.event.ConditionOperationAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ConditionTypeAvro;
 
-@Data
 @Entity
-@Builder
 @Table(name = "conditions")
-@AllArgsConstructor
+@SecondaryTable(name = "scenario_conditions", pkJoinColumns = @PrimaryKeyJoinColumn(name = "condition_id"))
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Condition {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
-    @Enumerated(EnumType.STRING)
-    ScenarioConditionType type;
+    ConditionTypeAvro type;
 
-    @Column(name = "operation")
     @Enumerated(EnumType.STRING)
-    ScenarioConditionType operation;
+    @Column(name = "operation")
+    ConditionOperationAvro operation;
 
     @Column(name = "value")
-    Long value;
+    Integer value;
+
+    @ManyToOne
+    @JoinColumn(name = "scenario_id", table = "scenario_conditions")
+    Scenario scenario;
+
+    @ManyToOne
+    @JoinColumn(name = "sensor_id", table = "scenario_conditions")
+    Sensor sensor;
 }

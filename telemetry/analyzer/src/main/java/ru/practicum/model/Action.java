@@ -3,25 +3,34 @@ package ru.practicum.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.model.enums.ActionType;
+import ru.yandex.practicum.kafka.telemetry.event.ActionTypeAvro;
 
-@Data
 @Entity
-@Builder
 @Table(name = "actions")
+@SecondaryTable(name = "scenario_actions", pkJoinColumns = @PrimaryKeyJoinColumn(name = "action_id"))
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Action {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    ActionType type;
+    @Column(name = "type")
+    ActionTypeAvro type;
 
     @Column(name = "value")
-    Long value;
+    Integer value;
+
+    @ManyToOne
+    @JoinColumn(name = "scenario_id", table = "scenario_actions")
+    Scenario scenario;
+
+    @ManyToOne
+    @JoinColumn(name = "sensor_id", table = "scenario_actions")
+    Sensor sensor;
 }
