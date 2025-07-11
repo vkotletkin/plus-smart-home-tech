@@ -9,13 +9,13 @@ import ru.yandex.practicum.kafka.telemetry.event.ConditionTypeAvro;
 @Entity
 @Table(name = "conditions")
 @SecondaryTable(name = "scenario_conditions", pkJoinColumns = @PrimaryKeyJoinColumn(name = "condition_id"))
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Condition {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -32,10 +32,12 @@ public class Condition {
     Integer value;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "scenario_id", table = "scenario_conditions")
     Scenario scenario;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "sensor_id", table = "scenario_conditions")
     Sensor sensor;
 }

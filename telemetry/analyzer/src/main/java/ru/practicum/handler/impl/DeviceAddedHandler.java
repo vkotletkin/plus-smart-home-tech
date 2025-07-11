@@ -39,7 +39,6 @@ public class DeviceAddedHandler implements HubEventHandler {
 
     @Override
     public String getTypeOfPayload() {
-        // todo: checks
         return DeviceAddedEventAvro.class.getSimpleName();
     }
 }

@@ -12,7 +12,6 @@ import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 import java.util.Properties;
 
-@Slf4j
 @Configuration
 public class KafkaConfig {
 
@@ -27,8 +26,6 @@ public class KafkaConfig {
 
     @Bean
     public KafkaConsumer<String, SensorsSnapshotAvro> snapshotConsumer() {
-        log.info("Configuring snapshotConsumer: bootstrap.servers={}, group.id={}",
-                bootstrapServers, snapshotsGroupId);
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, snapshotsGroupId);
@@ -41,8 +38,6 @@ public class KafkaConfig {
 
     @Bean
     public KafkaConsumer<String, HubEventAvro> hubEventConsumer() {
-        log.info("Configuring hubEventConsumer: bootstrap.servers={}, group.id={}",
-                bootstrapServers, hubGroupId);
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, hubGroupId);

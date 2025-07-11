@@ -3,6 +3,7 @@ package ru.practicum.handler.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.handler.HubEventHandler;
 import ru.practicum.model.Action;
 import ru.practicum.model.Condition;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ScenarioAddedHandler implements HubEventHandler {
 
     private final ScenarioRepository scenarioRepository;
@@ -30,14 +32,15 @@ public class ScenarioAddedHandler implements HubEventHandler {
     private final ConditionRepository conditionRepository;
 
     @Override
-    public void handle(HubEventAvro event) {
+    @Transactional
+    public void handle(HubEventAvro hubEventAvro) {
 
-        ScenarioAddedEventAvro scenarioAddedEventAvro = (ScenarioAddedEventAvro) event.getPayload();
+        ScenarioAddedEventAvro scenarioAddedEventAvro = (ScenarioAddedEventAvro) hubEventAvro.getPayload();
 
-        Scenario scenario = scenarioRepository.findByHubIdAndName(event.getHubId(), scenarioAddedEventAvro.getName())
+        Scenario scenario = scenarioRepository.findByHubIdAndName(hubEventAvro.getHubId(), scenarioAddedEventAvro.getName())
                 .orElseGet(() -> {
                     Scenario newScenario = Scenario.builder()
-                            .hubId(event.getHubId())
+                            .hubId(hubEventAvro.getHubId())
                             .name(scenarioAddedEventAvro.getName())
                             .build();
                     return scenarioRepository.save(newScenario);
@@ -47,7 +50,7 @@ public class ScenarioAddedHandler implements HubEventHandler {
                 .map(DeviceActionAvro::getSensorId)
                 .toList();
 
-        if (sensorRepository.existsByIdInAndHubId(actionSensorIds, event.getHubId())) {
+        if (sensorRepository.existsByIdInAndHubId(actionSensorIds, hubEventAvro.getHubId())) {
             List<Action> actions = scenarioAddedEventAvro.getActions().stream()
                     .map(action -> Action.builder()
                             .sensor(sensorRepository.findById(action.getSensorId()).orElseThrow())
@@ -64,7 +67,7 @@ public class ScenarioAddedHandler implements HubEventHandler {
                 .map(ScenarioConditionAvro::getSensorId)
                 .toList();
 
-        if (sensorRepository.existsByIdInAndHubId(conditionSensorIds, event.getHubId())) {
+        if (sensorRepository.existsByIdInAndHubId(conditionSensorIds, hubEventAvro.getHubId())) {
             List<Condition> conditions = scenarioAddedEventAvro.getConditions().stream()
                     .map(condition -> Condition.builder()
                             .sensor(sensorRepository.findById(condition.getSensorId()).orElseThrow())

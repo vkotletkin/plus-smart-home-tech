@@ -28,7 +28,9 @@ public class SnapshotHandlerImpl implements SnapshotHandler {
 
     @Override
     public void handle(SensorsSnapshotAvro snapshot) {
+
         Map<String, SensorStateAvro> states = snapshot.getSensorsState();
+
         List<Scenario> scenarios = scenarioRepository.findByHubId(snapshot.getHubId());
         scenarios.stream()
                 .filter(scenario -> checkConditions(scenario, states))

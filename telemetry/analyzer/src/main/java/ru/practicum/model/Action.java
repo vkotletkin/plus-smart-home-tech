@@ -8,13 +8,13 @@ import ru.yandex.practicum.kafka.telemetry.event.ActionTypeAvro;
 @Entity
 @Table(name = "actions")
 @SecondaryTable(name = "scenario_actions", pkJoinColumns = @PrimaryKeyJoinColumn(name = "action_id"))
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Action {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
@@ -27,10 +27,12 @@ public class Action {
     Integer value;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "scenario_id", table = "scenario_actions")
     Scenario scenario;
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "sensor_id", table = "scenario_actions")
     Sensor sensor;
 }
