@@ -1,50 +1,71 @@
 package ru.practicum.config;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.Properties;
-
-@Configuration
+@Getter
+@Setter
+@ToString
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@ConfigurationProperties(prefix = "spring.collector.kafka")
 public class KafkaConfig {
 
-    @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
-    private String bootstrapServers;
+    Telemetry telemetry;
 
-    @Value("${kafka.consumer.group-id.snapshots:analyzer.snapshots}")
-    private String snapshotsGroupId;
-
-    @Value("${kafka.consumer.group-id.hub:analyzer.hubs}")
-    private String hubGroupId;
-
-    @Bean
-    public KafkaConsumer<String, SensorsSnapshotAvro> snapshotConsumer() {
-        Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, snapshotsGroupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "ru.practicum.serialization.SensorsSnapshotDeserializer");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        return new KafkaConsumer<>(props);
+    public String getSnapshotTopic() {
+        return this.getTelemetry().getSnapshot().getTopic();
     }
 
-    @Bean
-    public KafkaConsumer<String, HubEventAvro> hubEventConsumer() {
-        Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, hubGroupId);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "ru.practicum.serialization.HubEventDeserializer");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        return new KafkaConsumer<>(props);
+    public String getSensorTopic() {
+        return this.getTelemetry().getSensor().getTopic();
+    }
+
+    public String getHubTopic() {
+        return this.getTelemetry().getHub().getTopic();
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class Telemetry {
+        Bootstrap bootstrap;
+        Sensor sensor;
+        Snapshot snapshot;
+        Hub hub;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class Bootstrap {
+        String servers;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class Sensor {
+        String topic;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class Snapshot {
+        String topic;
+    }
+
+    @Getter
+    @Setter
+    @ToString
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class Hub {
+        String topic;
     }
 }

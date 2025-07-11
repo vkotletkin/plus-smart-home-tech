@@ -25,7 +25,7 @@ public class SnapshotProcessor implements Runnable {
     private KafkaConsumer<String, SensorsSnapshotAvro> snapshotConsumer;
     private volatile boolean running = true;
 
-    @Value("${kafka.topics.snapshots}")
+    @Value("${kafka.topics.snapshots:telemetry.snapshots.v1}")
     private String snapshotsTopic;
 
     @Value("${spring.kafka.bootstrap-servers:localhost:9092}")

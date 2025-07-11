@@ -1,23 +1,23 @@
 package ru.practicum.service;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.practicum.config.KafkaConfig;
 import ru.practicum.handler.HubEventHandler;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -26,20 +26,30 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class HubEventProcessor implements Runnable {
+
+    private static final Duration CONSUME_ATTEMPT_TIMEOUT = Duration.ofMillis(1000);
+    private static final Map<TopicPartition, OffsetAndMetadata> currentOffsets = new HashMap<>();
+
     private final Set<HubEventHandler> handlers;
-    private KafkaConsumer<String, HubEventAvro> hubEventConsumer;
-    private volatile boolean running = true;
 
-    @Value("${kafka.topics.hub}")
-    private String hubEventsTopic;
+    private final KafkaConfig kafkaConfig;
+    private final KafkaConsumer<String, HubEventAvro> hubEventConsumer;
 
-    @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
-    private String bootstrapServers;
+    private static void manageOffsets(ConsumerRecord<String, HubEventAvro> polledRecord, int count, KafkaConsumer<String, HubEventAvro> consumer) {
 
-    @Value("${kafka.consumer.group-id.hub:analyzer.hubs}")
-    private String hubGroupId;
+        currentOffsets.put(
+                new TopicPartition(polledRecord.topic(), polledRecord.partition()),
+                new OffsetAndMetadata(polledRecord.offset() + 1)
+        );
 
-    private Map<String, HubEventHandler> handlerMap;
+        if (count % 10 == 0) {
+            consumer.commitAsync(currentOffsets, (offsets, exception) -> {
+                if (exception != null) {
+                    log.warn("Error in offset fixing: {}", offsets, exception);
+                }
+            });
+        }
+    }
 
     @PostConstruct
     public void start() {
@@ -49,84 +59,50 @@ public class HubEventProcessor implements Runnable {
 
     @Override
     public void run() {
+
         try {
-            // Инициализация KafkaConsumer
-            Properties props = new Properties();
-            props.put("bootstrap.servers", bootstrapServers);
-            props.put("group.id", hubGroupId);
-            props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-            props.put("value.deserializer", "ru.practicum.serialization.HubEventDeserializer");
-            props.put("auto.offset.reset", "earliest");
-            props.put("enable.auto.commit", "false");
-            hubEventConsumer = new KafkaConsumer<>(props);
 
-            handlerMap = handlers.stream()
+            Map<String, HubEventHandler> handlerMap = handlers.stream()
                     .collect(Collectors.toMap(HubEventHandler::getTypeOfPayload, Function.identity()));
-            log.info("Initialized handlerMap with {} handlers", handlerMap.size());
 
-            hubEventConsumer.subscribe(List.of(hubEventsTopic));
-            log.info("Subscribed to hub events topic: {}", hubEventsTopic);
+            Runtime.getRuntime().addShutdownHook(new Thread(hubEventConsumer::wakeup));
+            hubEventConsumer.subscribe(List.of(kafkaConfig.getHubTopic()));
 
-            while (running) {
-                try {
-                    ConsumerRecords<String, HubEventAvro> records = hubEventConsumer.poll(Duration.ofMillis(1000));
-                    for (ConsumerRecord<String, HubEventAvro> record : records) {
-                        try {
-                            HubEventAvro event = record.value();
-                            if (event == null) {
-                                log.warn("Null event received at offset {} in topic {}", record.offset(), hubEventsTopic);
-                                continue;
-                            }
-                            String eventType = event.getPayload().getClass().getSimpleName();
-                            log.info("Processing event: hubId={}, type={}, offset={}", event.getHubId(), eventType, record.offset());
-                            if (handlerMap.containsKey(eventType)) {
-                                handlerMap.get(eventType).handle(event);
-                            } else {
-                                log.warn("No handler for event type: {}", eventType);
-                            }
-                        } catch (Exception e) {
-                            log.error("Failed to process event at offset {} in topic {}: {}", record.offset(), hubEventsTopic, e.getMessage(), e);
-                            hubEventConsumer.seek(new TopicPartition(record.topic(), record.partition()), record.offset() + 1);
-                        }
-                    }
-                    hubEventConsumer.commitSync();
-                } catch (Exception e) {
-                    log.error("Error polling hub events: {}", e.getMessage(), e);
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        break;
-                    }
+            while (true) {
+
+                ConsumerRecords<String, HubEventAvro> records = hubEventConsumer.poll(CONSUME_ATTEMPT_TIMEOUT);
+
+                if (records.isEmpty()) {
+                    continue;
                 }
+
+                int count = 0;
+                for (ConsumerRecord<String, HubEventAvro> polledRecord : records) {
+
+                    HubEventAvro event = polledRecord.value();
+                    String eventType = event.getPayload().getClass().getSimpleName();
+
+                    log.info("Processing event: hubId={}, type={}, offset={}", event.getHubId(), eventType, polledRecord.offset());
+
+                    if (handlerMap.containsKey(eventType)) {
+                        handlerMap.get(eventType).handle(event);
+                    } else {
+                        log.warn("No handler for event type: {}", eventType);
+                    }
+
+                    manageOffsets(polledRecord, count, hubEventConsumer);
+                    count++;
+                }
+
+                hubEventConsumer.commitAsync();
             }
         } catch (WakeupException ignored) {
             log.info("HubEventProcessor received wakeup signal");
         } catch (Exception e) {
-            log.error("Fatal error in HubEventProcessor: {}", e.getMessage(), e);
+            log.error("Error in processing events from sensors", e);
         } finally {
-            closeConsumer();
-        }
-    }
-
-    @PreDestroy
-    public void shutdown() {
-        log.info("Shutting down HubEventProcessor");
-        running = false;
-        if (hubEventConsumer != null) {
-            hubEventConsumer.wakeup();
-        }
-    }
-
-    private void closeConsumer() {
-        try {
-            if (hubEventConsumer != null) {
-                hubEventConsumer.commitSync();
-                hubEventConsumer.close(Duration.ofSeconds(5));
-                log.info("Hub event consumer closed");
-            }
-        } catch (Exception e) {
-            log.error("Error closing hub event consumer: {}", e.getMessage(), e);
+            hubEventConsumer.close();
+            log.info("Hub Event Consumer is Closed");
         }
     }
 }
