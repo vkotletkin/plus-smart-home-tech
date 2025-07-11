@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.handler.HubEventHandler;
+import ru.practicum.model.Action;
+import ru.practicum.model.Condition;
 import ru.practicum.model.Scenario;
 import ru.practicum.repository.ActionRepository;
 import ru.practicum.repository.ConditionRepository;
@@ -12,8 +14,10 @@ import ru.practicum.repository.SensorRepository;
 import ru.yandex.practicum.kafka.telemetry.event.DeviceActionAvro;
 import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ScenarioConditionAvro;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,7 +48,7 @@ public class ScenarioAddedHandler implements HubEventHandler {
                 .toList();
 
         if (sensorRepository.existsByIdInAndHubId(actionSensorIds, event.getHubId())) {
-            List<Action> actions = payload.getActions().stream()
+            List<Action> actions = scenarioAddedEventAvro.getActions().stream()
                     .map(action -> Action.builder()
                             .sensor(sensorRepository.findById(action.getSensorId()).orElseThrow())
                             .scenario(scenario)
@@ -56,12 +60,12 @@ public class ScenarioAddedHandler implements HubEventHandler {
             log.info("Saved {} actions for scenario {}", actions.size(), scenario.getName());
         }
 
-        List<String> conditionSensorIds = payload.getConditions().stream()
+        List<String> conditionSensorIds = scenarioAddedEventAvro.getConditions().stream()
                 .map(ScenarioConditionAvro::getSensorId)
                 .toList();
 
         if (sensorRepository.existsByIdInAndHubId(conditionSensorIds, event.getHubId())) {
-            List<Condition> conditions = payload.getConditions().stream()
+            List<Condition> conditions = scenarioAddedEventAvro.getConditions().stream()
                     .map(condition -> Condition.builder()
                             .sensor(sensorRepository.findById(condition.getSensorId()).orElseThrow())
                             .scenario(scenario)

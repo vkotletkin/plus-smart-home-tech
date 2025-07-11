@@ -34,18 +34,23 @@ services:
                              --bootstrap-server kafka:29092'"
     init: true
 
-  smarthome-analyzer:
-    image: postgres:16.1
-    container_name: postgres-analyzer
-    restart: on-failure
+  db:
+    image: postgres:15
+    container_name: db
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=smarthome-analyzer
-      - POSTGRES_USER=smarthome-analyzer
-      - POSTGRES_DB=smarthome-analyzer
+      - POSTGRES_DB=smart_home
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
     healthcheck:
       test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
       timeout: 5s
       interval: 5s
       retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
