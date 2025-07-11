@@ -21,49 +21,46 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class HubRouterClient {
 
+    private static final int SHUTDOWN_TIMEOUT_SECONDS = 5;
+    private static final int KEEP_ALIVE_TIME_SECONDS = 30;
+
     private final HubRouterControllerGrpc.HubRouterControllerBlockingStub stub;
     private final ManagedChannel channel;
 
     public HubRouterClient(@Value("${grpc.client.hub-router.address}") String grpcAddress) {
         String address = grpcAddress.replace("static://", "");
-        this.channel = ManagedChannelBuilder.forTarget(address)
-                .usePlaintext()
-                .keepAliveTime(30, TimeUnit.SECONDS)
-                .keepAliveWithoutCalls(true)
-                .build();
+        this.channel = createChannel(address);
         this.stub = HubRouterControllerGrpc.newBlockingStub(channel);
         log.info("Initialized gRPC client for address: {}", address);
     }
 
     public void sendAction(Action action) {
-        try {
-            if (action == null || action.getScenario() == null || action.getSensor() == null) {
-                log.error("Invalid action: action={}, scenario={}, sensor={}", action,
-                        action != null ? action.getScenario() : null,
-                        action != null ? action.getSensor() : null);
-                return;
-            }
-            DeviceActionRequest request = DeviceActionRequest.newBuilder()
-                    .setHubId(action.getScenario().getHubId())
-                    .setScenarioName(action.getScenario().getName())
-                    .setAction(DeviceActionProto.newBuilder()
-                            .setSensorId(action.getSensor().getId())
-                            .setType(mapActionType(action.getType()))
-                            .setValue(action.getValue() != null ? action.getValue() : 0)
-                            .build())
-                    .setTimestamp(Timestamp.newBuilder()
-                            .setSeconds(Instant.now().getEpochSecond())
-                            .setNanos(Instant.now().getNano())
-                            .build())
-                    .build();
 
+        if (!isActionValid(action)) {
+            logInvalidAction(action);
+            return;
+        }
+
+        try {
+            DeviceActionRequest request = buildDeviceActionRequest(action);
             stub.handleDeviceAction(request);
-            log.info("Sent action {} for device {} in scenario {} for hub {}",
-                    request.getAction().getType(), action.getSensor().getId(),
-                    action.getScenario().getName(), action.getScenario().getHubId());
+            logSuccessfulAction(request, action);
         } catch (Exception e) {
-            log.error("Failed to send action for device {}: {}",
-                    action.getSensor().getId(), e.getMessage(), e);
+            logActionFailure(action, e);
+        }
+    }
+
+
+    @PreDestroy
+    public void shutdown() {
+        if (channel != null && !channel.isShutdown()) {
+            try {
+                channel.shutdown().awaitTermination(SHUTDOWN_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                log.info("gRPC channel shutdown successfully");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("Interrupted during gRPC channel shutdown: {}", e.getMessage(), e);
+            }
         }
     }
 
@@ -76,16 +73,65 @@ public class HubRouterClient {
         };
     }
 
-    @PreDestroy
-    public void shutdown() {
-        if (channel != null && !channel.isShutdown()) {
-            try {
-                channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
-                log.info("gRPC channel shutdown");
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                log.error("Interrupted during gRPC channel shutdown: {}", e.getMessage(), e);
-            }
-        }
+    private ManagedChannel createChannel(String address) {
+        return ManagedChannelBuilder.forTarget(address)
+                .usePlaintext()
+                .keepAliveTime(KEEP_ALIVE_TIME_SECONDS, TimeUnit.SECONDS)
+                .keepAliveWithoutCalls(true)
+                .build();
+    }
+
+    private boolean isActionValid(Action action) {
+        return action != null
+                && action.getScenario() != null
+                && action.getSensor() != null;
+    }
+
+    private void logInvalidAction(Action action) {
+        log.error("Invalid action: action={}, scenario={}, sensor={}",
+                action,
+                action != null ? action.getScenario() : null,
+                action != null ? action.getSensor() : null);
+    }
+
+    private DeviceActionRequest buildDeviceActionRequest(Action action) {
+        Instant now = Instant.now();
+
+        return DeviceActionRequest.newBuilder()
+                .setHubId(action.getScenario().getHubId())
+                .setScenarioName(action.getScenario().getName())
+                .setAction(buildDeviceActionProto(action))
+                .setTimestamp(buildTimestamp(now))
+                .build();
+    }
+
+    private DeviceActionProto buildDeviceActionProto(Action action) {
+        return DeviceActionProto.newBuilder()
+                .setSensorId(action.getSensor().getId())
+                .setType(mapActionType(action.getType()))
+                .setValue(action.getValue() != null ? action.getValue() : 0)
+                .build();
+    }
+
+    private Timestamp buildTimestamp(Instant instant) {
+        return Timestamp.newBuilder()
+                .setSeconds(instant.getEpochSecond())
+                .setNanos(instant.getNano())
+                .build();
+    }
+
+    private void logSuccessfulAction(DeviceActionRequest request, Action action) {
+        log.info("Sent action {} for device {} in scenario {} for hub {}",
+                request.getAction().getType(),
+                action.getSensor().getId(),
+                action.getScenario().getName(),
+                action.getScenario().getHubId());
+    }
+
+    private void logActionFailure(Action action, Exception e) {
+        String sensorId = action != null && action.getSensor() != null
+                ? action.getSensor().getId()
+                : "unknown";
+        log.error("Failed to send action for device {}: {}", sensorId, e.getMessage(), e);
     }
 }

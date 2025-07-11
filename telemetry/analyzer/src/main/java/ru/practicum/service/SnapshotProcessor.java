@@ -51,7 +51,7 @@ public class SnapshotProcessor implements Runnable {
 
     @PostConstruct
     public void start() {
-        new Thread(this::run, "SnapshotProcessorThread").start();
+        new Thread(this, "SnapshotProcessorThread").start();
         log.info("Started SnapshotProcessor thread");
     }
 

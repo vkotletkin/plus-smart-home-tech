@@ -26,9 +26,6 @@ grpc:
   client:
     hub-router:
       address: ${GRPC_HUB_ROUTER_ADDRESS:static://localhost:59090}
-      enableKeepAlive: true
-      keepAliveWithoutCalls: true
-      negotiationType: plaintext
 
 server:
   port: 5000
