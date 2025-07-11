@@ -1,6 +1,7 @@
 package ru.practicum.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -52,6 +53,12 @@ public class SnapshotProcessor implements Runnable {
     public void start() {
         new Thread(this::run, "SnapshotProcessorThread").start();
         log.info("Started SnapshotProcessor thread");
+    }
+
+    @PreDestroy
+    public void stop() {
+        snapshotConsumer.commitSync();
+        snapshotConsumer.close();
     }
 
     public void run() {

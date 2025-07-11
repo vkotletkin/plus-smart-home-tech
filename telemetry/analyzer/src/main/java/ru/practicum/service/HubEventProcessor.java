@@ -1,6 +1,7 @@
 package ru.practicum.service;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -55,6 +56,12 @@ public class HubEventProcessor implements Runnable {
     public void start() {
         new Thread(this, "HubEventHandlerThread").start();
         log.info("Started HubEventProcessor thread");
+    }
+
+    @PreDestroy
+    public void stop() {
+        hubEventConsumer.commitSync();
+        hubEventConsumer.close();
     }
 
     @Override
