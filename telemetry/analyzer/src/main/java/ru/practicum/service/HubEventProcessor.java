@@ -82,12 +82,12 @@ public class HubEventProcessor implements Runnable {
                     HubEventAvro event = polledRecord.value();
                     String eventType = event.getPayload().getClass().getSimpleName();
 
-                    log.info("Processing event: hubId={}, type={}, offset={}", event.getHubId(), eventType, polledRecord.offset());
+                    log.info("Processing Hub Event: hubId={}, type={}, offset={}", event.getHubId(), eventType, polledRecord.offset());
 
                     if (handlerMap.containsKey(eventType)) {
                         handlerMap.get(eventType).handle(event);
                     } else {
-                        log.warn("No handler for event type: {}", eventType);
+                        log.warn("No handler founded for event type: {}", eventType);
                     }
 
                     manageOffsets(polledRecord, count, hubEventConsumer);
@@ -97,9 +97,9 @@ public class HubEventProcessor implements Runnable {
                 hubEventConsumer.commitAsync();
             }
         } catch (WakeupException ignored) {
-            log.info("HubEventProcessor received wakeup signal");
+            log.info("Hub Event Consumer received wakeup signal");
         } catch (Exception e) {
-            log.error("Error in processing events from sensors", e);
+            log.error("Error in processing events from hubs", e);
         } finally {
             hubEventConsumer.close();
             log.info("Hub Event Consumer is Closed");
