@@ -57,18 +57,51 @@ public class SnapshotHandlerImpl implements SnapshotHandler {
             case EQUALS -> sensorValue.equals(condition.getValue());
             case LOWER_THAN -> sensorValue < condition.getValue();
             case GREATER_THAN -> sensorValue > condition.getValue();
-            default -> false;
         };
     }
 
     private Integer extractSensorValue(Object data, ConditionTypeAvro type) {
+        if (data == null) {
+            return null;
+        }
+
         return switch (type) {
-            case TEMPERATURE -> data instanceof ClimateSensorAvro climate ? climate.getTemperatureC() : null;
-            case HUMIDITY -> data instanceof ClimateSensorAvro climate ? climate.getHumidity() : null;
-            case CO2LEVEL -> data instanceof ClimateSensorAvro climate ? climate.getCo2Level() : null;
-            case LUMINOSITY -> data instanceof LightSensorAvro light ? light.getLuminosity() : null;
-            case MOTION -> data instanceof MotionSensorAvro motion ? (motion.getMotion() ? 1 : 0) : null;
-            case SWITCH -> data instanceof SwitchSensorAvro switchSensor ? (switchSensor.getState() ? 1 : 0) : null;
+            case TEMPERATURE -> {
+                if (data instanceof ClimateSensorAvro climate) {
+                    yield climate.getTemperatureC();
+                }
+                yield null;
+            }
+            case HUMIDITY -> {
+                if (data instanceof ClimateSensorAvro climate) {
+                    yield climate.getHumidity();
+                }
+                yield null;
+            }
+            case CO2LEVEL -> {
+                if (data instanceof ClimateSensorAvro climate) {
+                    yield climate.getCo2Level();
+                }
+                yield null;
+            }
+            case LUMINOSITY -> {
+                if (data instanceof LightSensorAvro light) {
+                    yield light.getLuminosity();
+                }
+                yield null;
+            }
+            case MOTION -> {
+                if (data instanceof MotionSensorAvro motion) {
+                    yield motion.getMotion() ? 1 : 0;
+                }
+                yield null;
+            }
+            case SWITCH -> {
+                if (data instanceof SwitchSensorAvro switchSensor) {
+                    yield switchSensor.getState() ? 1 : 0;
+                }
+                yield null;
+            }
         };
     }
 

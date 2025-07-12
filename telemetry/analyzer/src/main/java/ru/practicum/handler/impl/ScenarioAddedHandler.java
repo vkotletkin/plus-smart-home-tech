@@ -18,7 +18,6 @@ import ru.yandex.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
 import ru.yandex.practicum.kafka.telemetry.event.ScenarioConditionAvro;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,51 +34,92 @@ public class ScenarioAddedHandler implements HubEventHandler {
     @Transactional
     public void handle(HubEventAvro hubEventAvro) {
 
-        ScenarioAddedEventAvro scenarioAddedEventAvro = (ScenarioAddedEventAvro) hubEventAvro.getPayload();
+        ScenarioAddedEventAvro scenarioAddedEvent = (ScenarioAddedEventAvro) hubEventAvro.getPayload();
 
-        Scenario scenario = scenarioRepository.findByHubIdAndName(hubEventAvro.getHubId(), scenarioAddedEventAvro.getName())
-                .orElseGet(() -> {
-                    Scenario newScenario = Scenario.builder()
-                            .hubId(hubEventAvro.getHubId())
-                            .name(scenarioAddedEventAvro.getName())
-                            .build();
-                    return scenarioRepository.save(newScenario);
-                });
+        Scenario scenario = findOrCreateScenario(hubEventAvro, scenarioAddedEvent);
 
-        List<String> actionSensorIds = scenarioAddedEventAvro.getActions().stream()
-                .map(DeviceActionAvro::getSensorId)
-                .toList();
+        processActions(hubEventAvro, scenarioAddedEvent, scenario);
+        processConditions(hubEventAvro, scenarioAddedEvent, scenario);
+    }
 
-        if (sensorRepository.existsByIdInAndHubId(actionSensorIds, hubEventAvro.getHubId())) {
-            List<Action> actions = scenarioAddedEventAvro.getActions().stream()
-                    .map(action -> Action.builder()
-                            .sensor(sensorRepository.findById(action.getSensorId()).orElseThrow())
-                            .scenario(scenario)
-                            .type(action.getType())
-                            .value(action.getValue() != null ? action.getValue() : 0)
-                            .build())
-                    .collect(Collectors.toList());
+    public Scenario findOrCreateScenario(HubEventAvro hubEvent, ScenarioAddedEventAvro scenarioAddedEvent) {
+        return scenarioRepository.findByHubIdAndName(hubEvent.getHubId(), scenarioAddedEvent.getName())
+                .orElseGet(() -> createNewScenario(hubEvent, scenarioAddedEvent));
+    }
+
+    public Scenario createNewScenario(HubEventAvro hubEvent, ScenarioAddedEventAvro scenarioAddedEvent) {
+        Scenario newScenario = Scenario.builder()
+                .hubId(hubEvent.getHubId())
+                .name(scenarioAddedEvent.getName())
+                .build();
+        return scenarioRepository.save(newScenario);
+    }
+
+    public void processActions(HubEventAvro hubEvent, ScenarioAddedEventAvro scenarioAddedEvent, Scenario scenario) {
+        List<String> actionSensorIds = extractActionSensorIds(scenarioAddedEvent);
+
+        if (sensorsExist(actionSensorIds, hubEvent.getHubId())) {
+            List<Action> actions = createActions(scenarioAddedEvent.getActions(), scenario);
             actionRepository.saveAll(actions);
             log.info("Saved {} actions for scenario {}", actions.size(), scenario.getName());
         }
+    }
 
-        List<String> conditionSensorIds = scenarioAddedEventAvro.getConditions().stream()
-                .map(ScenarioConditionAvro::getSensorId)
+    public List<String> extractActionSensorIds(ScenarioAddedEventAvro scenarioAddedEvent) {
+        return scenarioAddedEvent.getActions().stream()
+                .map(DeviceActionAvro::getSensorId)
                 .toList();
+    }
 
-        if (sensorRepository.existsByIdInAndHubId(conditionSensorIds, hubEventAvro.getHubId())) {
-            List<Condition> conditions = scenarioAddedEventAvro.getConditions().stream()
-                    .map(condition -> Condition.builder()
-                            .sensor(sensorRepository.findById(condition.getSensorId()).orElseThrow())
-                            .scenario(scenario)
-                            .type(condition.getType())
-                            .operation(condition.getOperation())
-                            .value(mapValue(condition.getValue()))
-                            .build())
-                    .collect(Collectors.toList());
+    public List<Action> createActions(List<DeviceActionAvro> actionAvros, Scenario scenario) {
+        return actionAvros.stream()
+                .map(action -> buildAction(action, scenario))
+                .toList();
+    }
+
+    public Action buildAction(DeviceActionAvro actionAvro, Scenario scenario) {
+        return Action.builder()
+                .sensor(sensorRepository.findById(actionAvro.getSensorId()).orElseThrow())
+                .scenario(scenario)
+                .type(actionAvro.getType())
+                .value(actionAvro.getValue() != null ? actionAvro.getValue() : 0)
+                .build();
+    }
+
+    public void processConditions(HubEventAvro hubEvent, ScenarioAddedEventAvro scenarioAddedEvent, Scenario scenario) {
+        List<String> conditionSensorIds = extractConditionSensorIds(scenarioAddedEvent);
+
+        if (sensorsExist(conditionSensorIds, hubEvent.getHubId())) {
+            List<Condition> conditions = createConditions(scenarioAddedEvent.getConditions(), scenario);
             conditionRepository.saveAll(conditions);
             log.info("Saved {} conditions for scenario {}", conditions.size(), scenario.getName());
         }
+    }
+
+    public List<String> extractConditionSensorIds(ScenarioAddedEventAvro scenarioAddedEvent) {
+        return scenarioAddedEvent.getConditions().stream()
+                .map(ScenarioConditionAvro::getSensorId)
+                .toList();
+    }
+
+    public List<Condition> createConditions(List<ScenarioConditionAvro> conditionAvros, Scenario scenario) {
+        return conditionAvros.stream()
+                .map(condition -> buildCondition(condition, scenario))
+                .toList();
+    }
+
+    private Condition buildCondition(ScenarioConditionAvro conditionAvro, Scenario scenario) {
+        return Condition.builder()
+                .sensor(sensorRepository.findById(conditionAvro.getSensorId()).orElseThrow())
+                .scenario(scenario)
+                .type(conditionAvro.getType())
+                .operation(conditionAvro.getOperation())
+                .value(mapValue(conditionAvro.getValue()))
+                .build();
+    }
+
+    private boolean sensorsExist(List<String> sensorIds, String hubId) {
+        return sensorRepository.existsByIdInAndHubId(sensorIds, hubId);
     }
 
     private Integer mapValue(Object value) {
