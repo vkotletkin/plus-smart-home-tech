@@ -1,0 +1,40 @@
+spring:
+
+  collector:
+    kafka:
+      telemetry:
+        bootstrap:
+          servers: "localhost:9092"
+        sensor:
+          topic: "telemetry.sensors.v1"
+        snapshot:
+          topic: "telemetry.snapshots.v1"
+        hub:
+          topic: "telemetry.hubs.v1"
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/smarthome}
+    username: ${DB_USERNAME:smarthome}
+    password: ${DB_PASSWORD:smarthome}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  sql:
+    init:
+      mode: always
+
+
+grpc:
+  client:
+    hub-router:
+      address: ${GRPC_HUB_ROUTER_ADDRESS:static://localhost:59090}
+
+server:
+  port: 5000

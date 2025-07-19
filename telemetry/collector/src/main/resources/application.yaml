@@ -1,10 +1,11 @@
-server:
-  port: 8080
-
-
 spring:
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        use-random-policy: true
+        max-interval: 6000
+  application:
+    name: collector
   config:
-    import: kafka.properties
-grpc:
-  server:
-    port: 59091
+    import: configserver:http://localhost:8888
