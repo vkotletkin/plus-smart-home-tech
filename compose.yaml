@@ -42,11 +42,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=smarthome
-      - POSTGRES_USER=smarthome
-      - POSTGRES_PASSWORD=smarthome
+      POSTGRES_DB: smarthome
+      POSTGRES_USER: smarthome
+      POSTGRES_PASSWORD: smarthome
     healthcheck:
-      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      test: pg_isready -q -d smarthome -U smarthome
       timeout: 5s
       interval: 5s
       retries: 10
