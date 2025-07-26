@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.cart.dto.ProductDto;
 import ru.practicum.cart.dto.ProductResponse;
 import ru.practicum.cart.dto.QuantityStateRequest;
-import ru.practicum.cart.dto.SortDto;
 import ru.practicum.cart.enums.ProductCategory;
 import ru.practicum.service.ProductService;
 
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
