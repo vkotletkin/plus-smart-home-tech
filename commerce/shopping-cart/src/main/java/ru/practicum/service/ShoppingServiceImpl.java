@@ -3,7 +3,7 @@ package ru.practicum.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.exception.NotFoundException;
+import ru.practicum.exception.NoProductsInShoppingCartException;
 import ru.practicum.mapper.ShoppingCartMapper;
 import ru.practicum.model.ShoppingCart;
 import ru.practicum.repository.ShoppingCartRepository;
@@ -34,6 +34,7 @@ public class ShoppingServiceImpl implements ShoppingService {
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto createShoppingCart(String username, Map<UUID, Long> products) {
 
         final ShoppingCart shoppingCart = shoppingCartRepository.findByUserName(username)
@@ -46,12 +47,14 @@ public class ShoppingServiceImpl implements ShoppingService {
     }
 
     @Override
+    @Transactional
     public void deleteCart(String username) {
         getShoppingCart(username);
         shoppingCartRepository.deleteByUserName(username);
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto truncateCart(String username, List<UUID> products) {
 
         ShoppingCart shoppingCart = getShoppingCart(username);
@@ -61,6 +64,7 @@ public class ShoppingServiceImpl implements ShoppingService {
     }
 
     @Override
+    @Transactional
     public ShoppingCartDto changeCartQuantity(String username, QuantityUpdateRequest quantityUpdateRequest) {
 
         ShoppingCart shoppingCart = getShoppingCart(username);
@@ -85,7 +89,7 @@ public class ShoppingServiceImpl implements ShoppingService {
 
     private void checkIfProductExists(ShoppingCart shoppingCart, UUID productId) {
         if (!shoppingCart.getItems().containsKey(productId)) {
-            throw new NotFoundException(PRODUCT_NOT_FOUND_IN_CART_EXCEPTION_MESSAGE, productId, shoppingCart.getId());
+            throw new NoProductsInShoppingCartException(PRODUCT_NOT_FOUND_IN_CART_EXCEPTION_MESSAGE, productId, shoppingCart.getId());
         }
     }
 }

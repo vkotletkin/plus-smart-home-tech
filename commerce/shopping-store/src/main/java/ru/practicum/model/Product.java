@@ -1,7 +1,9 @@
 package ru.practicum.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import ru.practicum.cart.enums.ProductCategory;
 import ru.practicum.cart.enums.ProductState;
 import ru.practicum.cart.enums.QuantityState;
@@ -11,6 +13,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "products")
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Product {
 
     @Id

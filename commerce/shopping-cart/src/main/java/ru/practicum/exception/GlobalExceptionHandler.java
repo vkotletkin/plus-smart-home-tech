@@ -38,7 +38,21 @@ public class GlobalExceptionHandler {
                 Arrays.asList(e.getStackTrace()),
                 HttpStatus.NOT_FOUND.name(),
                 e.getMessage(),
-                "Not Found",
+                "Not Found Exception",
+                Arrays.asList(e.getSuppressed()),
+                e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNoProductsInShoppingCartException(NoProductsInShoppingCartException e) {
+        log.error("{}", e.getMessage());
+        return new ErrorResponse(
+                e.getCause(),
+                Arrays.asList(e.getStackTrace()),
+                HttpStatus.NOT_FOUND.name(),
+                e.getMessage(),
+                "Not Found Products in Shopping Cart",
                 Arrays.asList(e.getSuppressed()),
                 e.getLocalizedMessage());
     }

@@ -30,15 +30,43 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(NotFoundException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleNoSpecifiedProductInWarehouseException(NoSpecifiedProductInWarehouseException e) {
         log.error("{}", e.getMessage());
         return new ErrorResponse(
                 e.getCause(),
                 Arrays.asList(e.getStackTrace()),
                 HttpStatus.NOT_FOUND.name(),
                 e.getMessage(),
-                "Not Found",
+                "No specified product in warehouse",
+                Arrays.asList(e.getSuppressed()),
+                e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleProductInShoppingCartLowQuantityInWarehouse(ProductInShoppingCartLowQuantityInWarehouse e) {
+        log.error("{}", e.getMessage());
+        return new ErrorResponse(
+                e.getCause(),
+                Arrays.asList(e.getStackTrace()),
+                HttpStatus.NOT_FOUND.name(),
+                e.getMessage(),
+                "Product in shopping cart low quantity in warehouse",
+                Arrays.asList(e.getSuppressed()),
+                e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleSpecifiedProductAlreadyInWarehouseException(SpecifiedProductAlreadyInWarehouseException e) {
+        log.error("{}", e.getMessage());
+        return new ErrorResponse(
+                e.getCause(),
+                Arrays.asList(e.getStackTrace()),
+                HttpStatus.NOT_FOUND.name(),
+                e.getMessage(),
+                "Specified product already in warehouse",
                 Arrays.asList(e.getSuppressed()),
                 e.getLocalizedMessage());
     }
