@@ -1,14 +1,13 @@
-drop table if exists products;
+DROP TABLE IF EXISTS products;
 
-create table if not exists products
+CREATE TABLE IF NOT EXISTS products
 (
-    id       uuid default gen_random_uuid() primary key,
-    product_name     varchar not null,
-    description      varchar not null,
-    image_src        varchar,
-    quantity_state   varchar not null,
-    product_state    varchar not null,
-    rating           integer,
-    product_category varchar not null,
-    price            double precision
+    id                UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    product_name      VARCHAR NOT NULL,
+    description       VARCHAR NOT NULL,
+    image_src         VARCHAR,
+    quantity_state    VARCHAR NOT NULL,
+    product_state     VARCHAR NOT NULL,
+    product_category  VARCHAR NOT NULL,
+    price             DOUBLE PRECISION
 );
