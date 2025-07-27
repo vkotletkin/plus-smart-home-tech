@@ -68,7 +68,7 @@ public class ShoppingServiceImpl implements ShoppingService {
     public ShoppingCartDto changeCartQuantity(String username, QuantityUpdateRequest quantityUpdateRequest) {
 
         ShoppingCart shoppingCart = getShoppingCart(username);
-        checkIfProductExists(shoppingCart, quantityUpdateRequest.getProductId());
+        checkProductExists(shoppingCart, quantityUpdateRequest.getProductId());
 
         shoppingCart.getItems().put(quantityUpdateRequest.getProductId(), quantityUpdateRequest.getNewQuantity());
         shoppingCartRepository.save(shoppingCart);
@@ -87,7 +87,7 @@ public class ShoppingServiceImpl implements ShoppingService {
                 .orElseThrow(notFoundException(CART_NOT_FOUND_EXCEPTION_MESSAGE));
     }
 
-    private void checkIfProductExists(ShoppingCart shoppingCart, UUID productId) {
+    private void checkProductExists(ShoppingCart shoppingCart, UUID productId) {
         if (!shoppingCart.getItems().containsKey(productId)) {
             throw new NoProductsInShoppingCartException(PRODUCT_NOT_FOUND_IN_CART_EXCEPTION_MESSAGE, productId, shoppingCart.getId());
         }

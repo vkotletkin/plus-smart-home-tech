@@ -1,6 +1,9 @@
 package ru.practicum.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -14,7 +17,7 @@ import java.util.UUID;
 public class WarehouseProduct {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     UUID id;
 
     @Column(name = "fragile")
