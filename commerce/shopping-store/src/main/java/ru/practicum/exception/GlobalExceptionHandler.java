@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 e.getCause(),
                 Arrays.asList(e.getStackTrace()),
-                HttpStatus.NOT_FOUND.name(),
+                HttpStatus.INTERNAL_SERVER_ERROR.name(),
                 e.getMessage(),
                 "Internal Server Error",
                 Arrays.asList(e.getSuppressed()),

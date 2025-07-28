@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.feign.cart.CartFeignClient;
 import ru.practicum.service.ShoppingService;
 import ru.practicum.store.QuantityUpdateRequest;
 import ru.practicum.store.ShoppingCartDto;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/shopping-cart")
-public class ShoppingCartController {
+public class ShoppingCartController implements CartFeignClient {
 
     private final ShoppingService shoppingService;
 
@@ -28,8 +29,7 @@ public class ShoppingCartController {
     }
 
     @PutMapping
-    public ShoppingCartDto addProduct(@RequestBody Map<UUID, Long> products,
-                                      @RequestParam(name = "username") String username) {
+    public ShoppingCartDto addProduct(@RequestBody Map<UUID, Long> products, @RequestParam(name = "username") String username) {
         log.info("Request adding product for username {}", username);
         return shoppingService.createShoppingCart(username, products);
     }
@@ -52,5 +52,4 @@ public class ShoppingCartController {
         log.info("Request changing quantity for username {}", username);
         return shoppingService.changeCartQuantity(username, quantityUpdateRequest);
     }
-
 }

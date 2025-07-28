@@ -2,7 +2,9 @@ package ru.practicum.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.feign.warehouse.WarehouseFeignClient;
 import ru.practicum.service.WarehouseService;
 import ru.practicum.store.ShoppingCartDto;
 import ru.practicum.warehouse.AddProductToWarehouseRequest;
@@ -10,10 +12,11 @@ import ru.practicum.warehouse.AddressDto;
 import ru.practicum.warehouse.BookedProductsDto;
 import ru.practicum.warehouse.NewProductInWarehouseRequest;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/warehouse")
 @RequiredArgsConstructor
-public class WarehouseController {
+public class WarehouseController implements WarehouseFeignClient {
 
     private final WarehouseService warehouseService;
 
@@ -24,6 +27,7 @@ public class WarehouseController {
 
     @PostMapping("/check")
     public BookedProductsDto checkProductToWarehouse(@Valid @RequestBody ShoppingCartDto shoppingCartDto) {
+        log.info("Check product to warehouse");
         return warehouseService.checkProductOnShoppingCart(shoppingCartDto);
     }
 

@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.common.exception.model.ErrorResponse;
+import ru.practicum.feign.warehouse.exception.WarehouseBadRequestException;
+import ru.practicum.feign.warehouse.exception.WarehouseInternalServerException;
+import ru.practicum.feign.warehouse.exception.WarehouseNotFoundException;
 
 import java.util.Arrays;
 
@@ -64,9 +67,51 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(
                 e.getCause(),
                 Arrays.asList(e.getStackTrace()),
-                HttpStatus.NOT_FOUND.name(),
+                HttpStatus.BAD_REQUEST.name(),
                 e.getMessage(),
                 "Validation Error",
+                Arrays.asList(e.getSuppressed()),
+                e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleWarehouseBadRequestException(WarehouseBadRequestException e) {
+        log.error("{}", e.getMessage());
+        return new ErrorResponse(
+                e.getCause(),
+                Arrays.asList(e.getStackTrace()),
+                HttpStatus.BAD_REQUEST.name(),
+                e.getMessage(),
+                "Warehouse Bad Request",
+                Arrays.asList(e.getSuppressed()),
+                e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleWarehouseNotFoundException(WarehouseNotFoundException e) {
+        log.error("{}", e.getMessage());
+        return new ErrorResponse(
+                e.getCause(),
+                Arrays.asList(e.getStackTrace()),
+                HttpStatus.NOT_FOUND.name(),
+                e.getMessage(),
+                "Warehouse Not Found",
+                Arrays.asList(e.getSuppressed()),
+                e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public ErrorResponse handleWarehouseInternalServerException(WarehouseInternalServerException e) {
+        log.error("{}", e.getMessage());
+        return new ErrorResponse(
+                e.getCause(),
+                Arrays.asList(e.getStackTrace()),
+                HttpStatus.SERVICE_UNAVAILABLE.name(),
+                e.getMessage(),
+                "Warehouse Service Unavailable",
                 Arrays.asList(e.getSuppressed()),
                 e.getLocalizedMessage());
     }

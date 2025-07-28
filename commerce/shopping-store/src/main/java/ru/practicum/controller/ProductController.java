@@ -10,6 +10,7 @@ import ru.practicum.cart.dto.ProductDto;
 import ru.practicum.cart.dto.ProductResponse;
 import ru.practicum.cart.dto.QuantityStateRequest;
 import ru.practicum.cart.enums.ProductCategory;
+import ru.practicum.feign.store.StoreFeignClient;
 import ru.practicum.service.ProductService;
 
 import java.util.UUID;
@@ -18,13 +19,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/shopping-store")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductController implements StoreFeignClient {
 
     private final ProductService productService;
 
     @GetMapping
-    public ProductResponse findAllByCategory(@RequestParam(name = "category") ProductCategory productCategory,
-                                             Pageable pageable) {
+    public ProductResponse findAllByCategory(@RequestParam(name = "category") ProductCategory productCategory, Pageable pageable) {
         log.info("Requested find all by category query");
         return productService.findProductsByCategory(productCategory, pageable);
     }

@@ -2,6 +2,7 @@ package ru.practicum.service;
 
 import ru.practicum.store.QuantityUpdateRequest;
 import ru.practicum.store.ShoppingCartDto;
+import ru.practicum.warehouse.BookedProductsDto;
 
 import java.util.List;
 import java.util.Map;
@@ -18,4 +19,6 @@ public interface ShoppingService {
     ShoppingCartDto truncateCart(String username, List<UUID> products);
 
     ShoppingCartDto changeCartQuantity(String username, QuantityUpdateRequest quantityUpdateRequest);
+
+    BookedProductsDto bookProducts(String userName);
 }
