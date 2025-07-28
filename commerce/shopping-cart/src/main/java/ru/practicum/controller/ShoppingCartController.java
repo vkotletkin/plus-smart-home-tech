@@ -1,5 +1,6 @@
 package ru.practicum.controller;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import ru.practicum.feign.cart.CartFeignClient;
 import ru.practicum.service.ShoppingService;
 import ru.practicum.store.QuantityUpdateRequest;
 import ru.practicum.store.ShoppingCartDto;
+import ru.practicum.warehouse.BookedProductsDto;
 
 import java.util.List;
 import java.util.Map;
@@ -51,5 +53,10 @@ public class ShoppingCartController implements CartFeignClient {
                                           @RequestParam(name = "username") String username) {
         log.info("Request changing quantity for username {}", username);
         return shoppingService.changeCartQuantity(username, quantityUpdateRequest);
+    }
+
+    @Override
+    public BookedProductsDto bookProducts(@NotBlank String username) {
+        return shoppingService.bookProducts(username);
     }
 }

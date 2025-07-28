@@ -1,10 +1,12 @@
 package ru.practicum.feign.cart;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.store.QuantityUpdateRequest;
 import ru.practicum.store.ShoppingCartDto;
+import ru.practicum.warehouse.BookedProductsDto;
 
 import java.util.List;
 import java.util.Map;
@@ -30,4 +32,7 @@ public interface CartFeignClient {
     @PostMapping(ENDPOINT_PREFIX + "/change-quantity")
     ShoppingCartDto changeQuantity(@RequestBody QuantityUpdateRequest quantityUpdateRequest,
                                    @RequestParam(name = "username") String username);
+
+    @PostMapping(ENDPOINT_PREFIX + "/booking")
+    BookedProductsDto bookProducts(@RequestParam @NotBlank String username);
 }
