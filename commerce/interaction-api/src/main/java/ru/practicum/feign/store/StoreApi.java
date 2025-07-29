@@ -2,7 +2,6 @@ package ru.practicum.feign.store;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.cart.dto.ProductDto;
@@ -12,26 +11,24 @@ import ru.practicum.cart.enums.ProductCategory;
 
 import java.util.UUID;
 
-@FeignClient(name = "shopping-store")
-public interface StoreFeignClient {
 
-    String ENDPOINT_PREFIX = "/api/v1/shopping-store";
+public interface StoreApi {
 
-    @GetMapping(ENDPOINT_PREFIX)
+    @GetMapping("/api/v1/shopping-store")
     ProductResponse findAllByCategory(@RequestParam(name = "category") ProductCategory productCategory, Pageable pageable);
 
-    @PutMapping(ENDPOINT_PREFIX)
+    @PutMapping("/api/v1/shopping-store")
     ProductDto createProduct(@Valid @RequestBody ProductDto productDto);
 
-    @PostMapping(ENDPOINT_PREFIX)
+    @PostMapping("/api/v1/shopping-store")
     ProductDto updateProduct(@Valid @RequestBody ProductDto productDto);
 
-    @PostMapping(ENDPOINT_PREFIX + "/removeProductFromStore")
+    @PostMapping("/api/v1/shopping-store/removeProductFromStore")
     void deleteProduct(@NotNull @RequestBody UUID productId);
 
-    @PostMapping(ENDPOINT_PREFIX + "/quantityState")
+    @PostMapping("/api/v1/shopping-store/quantityState")
     ProductDto updateQuantityState(@Valid QuantityStateRequest request);
 
-    @GetMapping(ENDPOINT_PREFIX + "/{product-id}")
+    @GetMapping("/api/v1/shopping-store/{product-id}")
     ProductDto findProductById(@PathVariable(name = "product-id") UUID productId);
 }
