@@ -14,21 +14,23 @@ import java.util.UUID;
 
 public interface StoreApi {
 
-    @GetMapping("/api/v1/shopping-store")
+    String ENDPOINT_BASE = "/api/v1/shopping-store";
+
+    @GetMapping(ENDPOINT_BASE)
     ProductResponse findAllByCategory(@RequestParam(name = "category") ProductCategory productCategory, Pageable pageable);
 
-    @PutMapping("/api/v1/shopping-store")
+    @PutMapping(ENDPOINT_BASE)
     ProductDto createProduct(@Valid @RequestBody ProductDto productDto);
 
-    @PostMapping("/api/v1/shopping-store")
+    @PostMapping(ENDPOINT_BASE)
     ProductDto updateProduct(@Valid @RequestBody ProductDto productDto);
 
-    @PostMapping("/api/v1/shopping-store/removeProductFromStore")
+    @PostMapping(ENDPOINT_BASE + "/removeProductFromStore")
     void deleteProduct(@NotNull @RequestBody UUID productId);
 
-    @PostMapping("/api/v1/shopping-store/quantityState")
+    @PostMapping(ENDPOINT_BASE + "/quantityState")
     ProductDto updateQuantityState(@Valid QuantityStateRequest request);
 
-    @GetMapping("/api/v1/shopping-store/{product-id}")
+    @GetMapping(ENDPOINT_BASE + "/{product-id}")
     ProductDto findProductById(@PathVariable(name = "product-id") UUID productId);
 }

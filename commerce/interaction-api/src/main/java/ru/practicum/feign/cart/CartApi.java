@@ -13,22 +13,24 @@ import java.util.UUID;
 
 public interface CartApi {
 
-    @GetMapping("/api/v1/shopping-cart")
+    String ENDPOINT_BASE = "/api/v1/shopping-cart";
+
+    @GetMapping(ENDPOINT_BASE)
     ShoppingCartDto getShoppingCart(@RequestParam @NotEmpty String username);
 
-    @PutMapping("/api/v1/shopping-cart")
+    @PutMapping(ENDPOINT_BASE)
     ShoppingCartDto addProduct(@RequestBody Map<UUID, Long> products, @RequestParam(name = "username") String username);
 
-    @DeleteMapping("/api/v1/shopping-cart")
+    @DeleteMapping(ENDPOINT_BASE)
     void deleteShoppingCart(@RequestParam @NotEmpty String username);
 
-    @PostMapping("/api/v1/shopping-cart/remove")
+    @PostMapping(ENDPOINT_BASE + "/remove")
     ShoppingCartDto removeProduct(@RequestBody List<UUID> products, @RequestParam(name = "username") String username);
 
-    @PostMapping("/api/v1/shopping-cart/change-quantity")
+    @PostMapping(ENDPOINT_BASE + "/change-quantity")
     ShoppingCartDto changeQuantity(@RequestBody QuantityUpdateRequest quantityUpdateRequest,
                                    @RequestParam(name = "username") String username);
 
-    @PostMapping("/api/v1/shopping-cart/booking")
+    @PostMapping(ENDPOINT_BASE + "/booking")
     BookedProductsDto bookProducts(@RequestParam @NotBlank String username);
 }

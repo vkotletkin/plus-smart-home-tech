@@ -13,15 +13,17 @@ import ru.practicum.warehouse.NewProductInWarehouseRequest;
 
 public interface WarehouseApi {
 
-    @PutMapping("/api/v1/warehouse")
+    String ENDPOINT_BASE = "/api/v1/warehouse";
+
+    @PutMapping(ENDPOINT_BASE)
     void createProductToWarehouse(@Valid @RequestBody NewProductInWarehouseRequest request);
 
-    @PostMapping("/api/v1/warehouse/check")
+    @PostMapping(ENDPOINT_BASE + "/check")
     BookedProductsDto checkProductToWarehouse(@Valid @RequestBody ShoppingCartDto shoppingCartDto);
 
-    @PostMapping("/api/v1/warehouse/add")
+    @PostMapping(ENDPOINT_BASE + "/add")
     void addProductToWarehouse(@Valid @RequestBody AddProductToWarehouseRequest request);
 
-    @GetMapping("/api/v1/warehouse/address")
+    @GetMapping(ENDPOINT_BASE + "/address")
     AddressDto getAddress();
 }
