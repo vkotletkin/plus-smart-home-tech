@@ -13,7 +13,6 @@ spring:
   config:
     import: "configserver:"
 
-
 eureka:
   client:
     serviceUrl:
