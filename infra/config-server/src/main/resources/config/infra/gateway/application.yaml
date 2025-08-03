@@ -1,0 +1,84 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: shopping_cart_circuitbreaker_route
+          uri: lb://shopping-cart
+          predicates:
+            - Path=/api/v1/shopping-cart/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: shoppingCartCB
+                fallbackUri: forward:/fallback/shopping-cart
+        - id: shopping_store_circuitbreaker_route
+          uri: lb://shopping-store
+          predicates:
+            - Path=/api/v1/shopping-store/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: shoppingStoreCB
+                fallbackUri: forward:/fallback/shopping-store
+            - name: Retry
+              args:
+                retries: 3
+                statuses: NOT_FOUND
+                methods: GET
+        - id: warehouse_circuitbreaker_route
+          uri: lb://warehouse
+          predicates:
+            - Path=/api/v1/warehouse/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: warehouseCB
+                fallbackUri: forward:/fallback/warehouse
+
+resilience4j.circuitbreaker:
+  instances:
+    shoppingCartCB:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      recordExceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException
+        - java.io.IOException
+        - java.util.concurrent.TimeoutException
+        - org.springframework.cloud.gateway.support.TimeoutException
+    shoppingStoreCB:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      recordExceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException
+        - java.io.IOException
+        - java.util.concurrent.TimeoutException
+        - org.springframework.cloud.gateway.support.TimeoutException
+    warehouseCB:
+      registerHealthIndicator: true
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 5
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      waitDurationInOpenState: 5s
+      failureRateThreshold: 50
+      eventConsumerBufferSize: 10
+      recordExceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException
+        - java.io.IOException
+        - java.util.concurrent.TimeoutException
+        - org.springframework.cloud.gateway.support.TimeoutException
