@@ -12,6 +12,7 @@ import ru.practicum.repository.ActionRepository;
 import ru.practicum.repository.ConditionRepository;
 import ru.practicum.repository.ScenarioRepository;
 import ru.practicum.service.HubRouterClient;
+import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.util.List;
 import java.util.Map;
