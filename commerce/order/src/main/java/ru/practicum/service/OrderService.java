@@ -1,11 +1,9 @@
-package ru.yandex.practicum.service;
+package ru.practicum.service;
 
 import ru.practicum.order.OrderCreateRequest;
 import ru.practicum.order.OrderDto;
 import ru.practicum.order.ProductReturnRequest;
-import ru.yandex.practicum.model.Order;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 

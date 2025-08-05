@@ -1,4 +1,4 @@
-package ru.yandex.practicum.model;
+package ru.practicum.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

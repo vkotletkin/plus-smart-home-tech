@@ -1,4 +1,4 @@
-package ru.yandex.practicum.service;
+package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -6,8 +6,8 @@ import ru.practicum.feign.order.OrderFeignClient;
 import ru.practicum.order.OrderCreateRequest;
 import ru.practicum.order.OrderDto;
 import ru.practicum.order.ProductReturnRequest;
-import ru.yandex.practicum.mapper.OrderMapper;
-import ru.yandex.practicum.repository.OrderRepository;
+import ru.practicum.mapper.OrderMapper;
+import ru.practicum.repository.OrderRepository;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +15,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
+
+    private final OrderFeignClient orderFeignClient;
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;

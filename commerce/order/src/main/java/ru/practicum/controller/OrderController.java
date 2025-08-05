@@ -1,4 +1,4 @@
-package ru.yandex.practicum.controller;
+package ru.practicum.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,7 +7,7 @@ import ru.practicum.feign.order.OrderApi;
 import ru.practicum.order.OrderCreateRequest;
 import ru.practicum.order.OrderDto;
 import ru.practicum.order.ProductReturnRequest;
-import ru.yandex.practicum.service.OrderService;
+import ru.practicum.service.OrderService;
 
 import java.util.List;
 import java.util.UUID;
