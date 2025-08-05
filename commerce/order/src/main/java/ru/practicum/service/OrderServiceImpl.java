@@ -2,11 +2,14 @@ package ru.practicum.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.feign.cart.CartFeignClient;
+import ru.practicum.feign.delivery.DeliveryFeignClient;
 import ru.practicum.feign.order.OrderFeignClient;
+import ru.practicum.feign.warehouse.WarehouseFeignClient;
+import ru.practicum.mapper.OrderMapper;
 import ru.practicum.order.OrderCreateRequest;
 import ru.practicum.order.OrderDto;
 import ru.practicum.order.ProductReturnRequest;
-import ru.practicum.mapper.OrderMapper;
 import ru.practicum.repository.OrderRepository;
 
 import java.util.List;
@@ -17,13 +20,16 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderFeignClient orderFeignClient;
+    private final CartFeignClient cartFeignClient;
+    private final DeliveryFeignClient deliveryFeignClient;
+    private final WarehouseFeignClient warehouseFeignClient;
 
     private final OrderRepository orderRepository;
     private final OrderMapper orderMapper;
 
     @Override
-    public List<OrderDto> getUserOrders(String userName) {
-        return List.of();
+    public List<OrderDto> getUserOrders(String username) {
+        return orderMapper.toDto(orderRepository.findAllByUsername(username));
     }
 
     @Override

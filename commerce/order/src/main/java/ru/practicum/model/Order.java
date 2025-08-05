@@ -22,7 +22,7 @@ public class Order {
     UUID id;
 
     @Column(name = "user_name")
-    String userName;
+    String username;
 
     @Column(name = "cart_id")
     UUID cartId;
