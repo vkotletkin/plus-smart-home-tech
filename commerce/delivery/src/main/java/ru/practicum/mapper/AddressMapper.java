@@ -8,6 +8,6 @@ import ru.practicum.warehouse.AddressDto;
 @Mapper(componentModel = "spring")
 public interface AddressMapper {
 
-    @Mapping(target = "addressId", ignore = true)
+    @Mapping(target = "id", ignore = true)
     Address toModel(AddressDto dto);
 }
