@@ -44,16 +44,16 @@ public class WarehouseController implements WarehouseApi {
 
     @Override
     public void shippedToDelivery(DeliveryRequest request) {
-
+        warehouseService.shippedToDelivery(request);
     }
 
     @Override
     public void acceptReturn(Map<UUID, Integer> products) {
-
+        warehouseService.acceptReturn(products);
     }
 
     @Override
     public BookedProductsDto assemblyProductsForOrder(AssemblyRequest request) {
-        return null;
+        return warehouseService.assemblyProductsForOrder(request);
     }
 }
