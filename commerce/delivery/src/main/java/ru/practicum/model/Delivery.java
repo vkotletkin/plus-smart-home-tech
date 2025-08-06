@@ -1,8 +1,7 @@
 package ru.practicum.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.delivery.DeliveryStatus;
 
@@ -10,6 +9,9 @@ import java.util.UUID;
 
 @Data
 @Entity
+@Builder
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @Table(name = "delivery")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Delivery {
