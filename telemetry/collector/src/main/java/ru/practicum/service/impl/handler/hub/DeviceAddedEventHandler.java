@@ -3,11 +3,11 @@ package ru.practicum.service.impl.handler.hub;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.springframework.stereotype.Component;
 import ru.practicum.service.HubEventHandler;
-import ru.yandex.practicum.grpc.telemetry.event.DeviceAddedEventProto;
-import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceTypeAvro;
-import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
+import ru.practicum.grpc.telemetry.event.DeviceAddedEventProto;
+import ru.practicum.grpc.telemetry.event.HubEventProto;
+import ru.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
+import ru.practicum.kafka.telemetry.event.DeviceTypeAvro;
+import ru.practicum.kafka.telemetry.event.HubEventAvro;
 
 import java.time.Instant;
 

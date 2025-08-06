@@ -8,8 +8,8 @@ import ru.practicum.handler.HubEventHandler;
 import ru.practicum.repository.ActionRepository;
 import ru.practicum.repository.ConditionRepository;
 import ru.practicum.repository.ScenarioRepository;
-import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
+import ru.practicum.kafka.telemetry.event.HubEventAvro;
+import ru.practicum.kafka.telemetry.event.ScenarioRemovedEventAvro;
 
 @Slf4j
 @Component

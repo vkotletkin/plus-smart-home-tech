@@ -12,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class DeliveryController implements DeliveryApi {

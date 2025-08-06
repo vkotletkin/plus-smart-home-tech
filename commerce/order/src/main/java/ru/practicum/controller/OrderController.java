@@ -12,7 +12,6 @@ import ru.practicum.service.InfrastructureOrderService;
 import java.util.List;
 import java.util.UUID;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class OrderController implements OrderApi {

@@ -7,8 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.handler.HubEventHandler;
 import ru.practicum.model.Sensor;
 import ru.practicum.repository.SensorRepository;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
+import ru.practicum.kafka.telemetry.event.DeviceAddedEventAvro;
+import ru.practicum.kafka.telemetry.event.HubEventAvro;
 
 import java.util.List;
 

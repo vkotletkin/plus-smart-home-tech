@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.handler.HubEventHandler;
 import ru.practicum.repository.SensorRepository;
-import ru.yandex.practicum.kafka.telemetry.event.DeviceRemovedEventAvro;
-import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
+import ru.practicum.kafka.telemetry.event.DeviceRemovedEventAvro;
+import ru.practicum.kafka.telemetry.event.HubEventAvro;
 
 @Slf4j
 @Service

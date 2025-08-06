@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.practicum.model.Action;
-import ru.yandex.practicum.grpc.telemetry.event.ActionTypeProto;
-import ru.yandex.practicum.grpc.telemetry.event.DeviceActionProto;
-import ru.yandex.practicum.grpc.telemetry.event.DeviceActionRequest;
-import ru.yandex.practicum.grpc.telemetry.hubrouter.HubRouterControllerGrpc;
-import ru.yandex.practicum.kafka.telemetry.event.ActionTypeAvro;
+import ru.practicum.grpc.telemetry.event.ActionTypeProto;
+import ru.practicum.grpc.telemetry.event.DeviceActionProto;
+import ru.practicum.grpc.telemetry.event.DeviceActionRequest;
+import ru.practicum.grpc.telemetry.hubrouter.HubRouterControllerGrpc;
+import ru.practicum.kafka.telemetry.event.ActionTypeAvro;
 
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
