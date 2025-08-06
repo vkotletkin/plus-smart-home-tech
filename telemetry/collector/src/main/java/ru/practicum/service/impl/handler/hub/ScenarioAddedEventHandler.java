@@ -2,10 +2,9 @@ package ru.practicum.service.impl.handler.hub;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.springframework.stereotype.Component;
-import ru.practicum.kafka.telemetry.event.*;
 import ru.practicum.service.HubEventHandler;
-import ru.practicum.grpc.telemetry.event.HubEventProto;
-import ru.practicum.grpc.telemetry.event.ScenarioAddedEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.ScenarioAddedEventProto;
 import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.time.Instant;

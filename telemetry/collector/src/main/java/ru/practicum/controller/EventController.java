@@ -8,9 +8,9 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import ru.practicum.service.HubEventHandler;
 import ru.practicum.service.KafkaProducerService;
 import ru.practicum.service.SensorEventHandler;
-import ru.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
-import ru.practicum.grpc.telemetry.event.HubEventProto;
-import ru.practicum.grpc.telemetry.event.SensorEventProto;
+import ru.yandex.practicum.grpc.telemetry.collector.CollectorControllerGrpc;
+import ru.yandex.practicum.grpc.telemetry.event.HubEventProto;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
 
 import java.util.Map;
 import java.util.Set;

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.feign.payment.PaymentApi;
 import ru.practicum.order.OrderDto;
 import ru.practicum.payment.PaymentDto;
+import ru.practicum.service.PaymentService;
 
 import java.math.BigDecimal;
 import java.util.UUID;

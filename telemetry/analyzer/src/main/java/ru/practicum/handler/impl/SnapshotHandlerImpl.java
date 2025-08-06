@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.handler.SnapshotHandler;
-import ru.practicum.kafka.telemetry.event.*;
+import ru.yandex.practicum.kafka.telemetry.event.*;
 import ru.practicum.model.Action;
 import ru.practicum.model.Condition;
 import ru.practicum.model.Scenario;
@@ -13,7 +13,6 @@ import ru.practicum.repository.ActionRepository;
 import ru.practicum.repository.ConditionRepository;
 import ru.practicum.repository.ScenarioRepository;
 import ru.practicum.service.HubRouterClient;
-import ru.yandex.practicum.kafka.telemetry.event.*;
 
 import java.util.List;
 import java.util.Map;

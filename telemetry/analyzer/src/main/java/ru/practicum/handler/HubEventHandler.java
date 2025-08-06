@@ -1,6 +1,7 @@
 package ru.practicum.handler;
 
-import ru.practicum.kafka.telemetry.event.HubEventAvro;
+
+import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
 
 public interface HubEventHandler {
 

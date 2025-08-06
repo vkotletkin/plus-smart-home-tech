@@ -13,7 +13,7 @@ import org.apache.kafka.common.errors.WakeupException;
 import org.springframework.stereotype.Service;
 import ru.practicum.config.KafkaConfig;
 import ru.practicum.handler.SnapshotHandler;
-import ru.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorsSnapshotAvro;
 
 import java.time.Duration;
 import java.util.HashMap;

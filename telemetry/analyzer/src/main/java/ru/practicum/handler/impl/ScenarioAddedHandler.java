@@ -5,6 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.handler.HubEventHandler;
+import ru.yandex.practicum.kafka.telemetry.event.DeviceActionAvro;
+import ru.yandex.practicum.kafka.telemetry.event.HubEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
+import ru.yandex.practicum.kafka.telemetry.event.ScenarioConditionAvro;
 import ru.practicum.model.Action;
 import ru.practicum.model.Condition;
 import ru.practicum.model.Scenario;
@@ -12,10 +16,6 @@ import ru.practicum.repository.ActionRepository;
 import ru.practicum.repository.ConditionRepository;
 import ru.practicum.repository.ScenarioRepository;
 import ru.practicum.repository.SensorRepository;
-import ru.practicum.kafka.telemetry.event.DeviceActionAvro;
-import ru.practicum.kafka.telemetry.event.HubEventAvro;
-import ru.practicum.kafka.telemetry.event.ScenarioAddedEventAvro;
-import ru.practicum.kafka.telemetry.event.ScenarioConditionAvro;
 
 import java.util.List;
 

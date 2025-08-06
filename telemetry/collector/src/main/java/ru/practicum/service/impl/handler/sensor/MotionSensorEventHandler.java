@@ -3,10 +3,10 @@ package ru.practicum.service.impl.handler.sensor;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.springframework.stereotype.Component;
 import ru.practicum.service.SensorEventHandler;
-import ru.practicum.grpc.telemetry.event.MotionSensorProto;
-import ru.practicum.grpc.telemetry.event.SensorEventProto;
-import ru.practicum.kafka.telemetry.event.MotionSensorAvro;
-import ru.practicum.kafka.telemetry.event.SensorEventAvro;
+import ru.yandex.practicum.grpc.telemetry.event.MotionSensorProto;
+import ru.yandex.practicum.grpc.telemetry.event.SensorEventProto;
+import ru.yandex.practicum.kafka.telemetry.event.MotionSensorAvro;
+import ru.yandex.practicum.kafka.telemetry.event.SensorEventAvro;
 
 import java.time.Instant;
 
