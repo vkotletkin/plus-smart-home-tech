@@ -1,8 +1,7 @@
 package ru.practicum.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.order.OrderStatus;
 
@@ -12,7 +11,10 @@ import java.util.UUID;
 
 @Data
 @Entity
+@Builder
 @Table(name = "orders")
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Order {
 
@@ -53,8 +55,10 @@ public class Order {
 
     @Column(name = "total_price")
     BigDecimal totalPrice;
+
     @Column(name = "delivery_price")
     BigDecimal deliveryPrice;
+
     @Column(name = "product_price")
     BigDecimal productPrice;
 }

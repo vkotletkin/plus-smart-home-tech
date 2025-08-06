@@ -1,30 +1,21 @@
-package ru.practicum.delivery;
+package ru.practicum.warehouse;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.warehouse.AddressDto;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DeliveryDto {
+public class AssemblyRequest {
 
-    UUID deliveryId;
-
-    @NotNull
-    AddressDto senderAddress;
-
-    @NotNull
-    AddressDto recipientAddress;
-
-    @NotNull
     UUID orderId;
 
     @NotNull
-    DeliveryStatus deliveryStatus;
+    Map<UUID, Long> products;
 }

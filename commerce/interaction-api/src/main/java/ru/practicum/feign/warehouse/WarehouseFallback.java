@@ -1,12 +1,13 @@
 package ru.practicum.feign.warehouse;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.delivery.DeliveryRequest;
 import ru.practicum.feign.warehouse.exception.WarehouseInternalServerException;
 import ru.practicum.store.ShoppingCartDto;
-import ru.practicum.warehouse.AddProductToWarehouseRequest;
-import ru.practicum.warehouse.AddressDto;
-import ru.practicum.warehouse.BookedProductsDto;
-import ru.practicum.warehouse.NewProductInWarehouseRequest;
+import ru.practicum.warehouse.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 @Component
 public class WarehouseFallback implements WarehouseFeignClient {
@@ -28,6 +29,21 @@ public class WarehouseFallback implements WarehouseFeignClient {
 
     @Override
     public AddressDto getAddress() {
+        throw new WarehouseInternalServerException("Warehouse service unavailable");
+    }
+
+    @Override
+    public void shippedToDelivery(DeliveryRequest request) {
+        throw new WarehouseInternalServerException("Warehouse service unavailable");
+    }
+
+    @Override
+    public void acceptReturn(Map<UUID, Integer> products) {
+        throw new WarehouseInternalServerException("Warehouse service unavailable");
+    }
+
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyRequest request) {
         throw new WarehouseInternalServerException("Warehouse service unavailable");
     }
 }

@@ -7,7 +7,7 @@ import ru.practicum.feign.order.OrderApi;
 import ru.practicum.order.OrderCreateRequest;
 import ru.practicum.order.OrderDto;
 import ru.practicum.order.ProductReturnRequest;
-import ru.practicum.service.OrderService;
+import ru.practicum.service.InfrastructureOrderService;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,75 +17,76 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderController implements OrderApi {
 
-    private final OrderService orderService;
+    private final InfrastructureOrderService infrastructureOrderService;
 
     @Override
     public List<OrderDto> getClientOrders(String username) {
-        return List.of();
+        return infrastructureOrderService.getUserOrders(username);
     }
 
     @Override
     public OrderDto createNewOrder(OrderCreateRequest request) {
-        return null;
+        return infrastructureOrderService.createNewOrder(request);
     }
 
     @Override
     public OrderDto returnProducts(ProductReturnRequest request) {
-        return null;
+        return infrastructureOrderService.returnProducts(request);
     }
 
     @Override
     public OrderDto payOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.payOrder(orderId);
     }
 
     @Override
     public OrderDto failPayOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.failedPayOrder(orderId);
     }
 
     @Override
     public OrderDto successPayOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.successedPayOrder(orderId);
     }
 
     @Override
-    public OrderDto deliverOrder(UUID orderId) {
-        return null;
+    public OrderDto deliveryOrder(UUID orderId) {
+        return infrastructureOrderService.deliveryOrder(orderId);
     }
 
     @Override
     public OrderDto failDeliverOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.failDeliverOrder(orderId);
     }
 
     @Override
     public OrderDto completeOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.completeOrder(orderId);
     }
 
     @Override
     public OrderDto calculateTotalPrice(UUID orderId) {
-        return null;
+        return infrastructureOrderService.calculateTotalPrice(orderId);
     }
 
     @Override
     public OrderDto calculateDeliveryPrice(UUID orderId) {
-        return null;
+        return infrastructureOrderService.calculateDeliveryPrice(orderId);
     }
 
     @Override
     public OrderDto assemblyOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.assemblyOrder(orderId);
     }
 
     @Override
     public OrderDto failAssemblyOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.failAssemblyOrder(orderId);
+
     }
 
     @Override
     public OrderDto getOrder(UUID orderId) {
-        return null;
+        return infrastructureOrderService.getOrderDetails(orderId);
     }
 }

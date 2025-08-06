@@ -36,7 +36,7 @@ public interface OrderApi {
     OrderDto successPayOrder(@RequestBody @NotNull UUID orderId);
 
     @PostMapping(ENDPOINT_BASE + "/delivery")
-    OrderDto deliverOrder(@RequestBody @NotNull UUID orderId);
+    OrderDto deliveryOrder(@RequestBody @NotNull UUID orderId);
 
     @PostMapping(ENDPOINT_BASE + "/delivery/failed")
     OrderDto failDeliverOrder(@RequestBody @NotNull UUID orderId);
