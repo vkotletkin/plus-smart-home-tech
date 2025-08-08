@@ -13,7 +13,7 @@ import java.util.UUID;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductReturnRequest {
 
-    @NotEmpty
+    @NotNull
     String userName;
 
     @NotNull
