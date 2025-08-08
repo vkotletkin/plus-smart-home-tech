@@ -5,13 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ru.practicum.delivery.DeliveryRequest;
 import ru.practicum.feign.warehouse.WarehouseApi;
 import ru.practicum.service.WarehouseService;
 import ru.practicum.store.ShoppingCartDto;
-import ru.practicum.warehouse.AddProductToWarehouseRequest;
-import ru.practicum.warehouse.AddressDto;
-import ru.practicum.warehouse.BookedProductsDto;
-import ru.practicum.warehouse.NewProductInWarehouseRequest;
+import ru.practicum.warehouse.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -39,5 +40,20 @@ public class WarehouseController implements WarehouseApi {
     @Override
     public AddressDto getAddress() {
         return warehouseService.getWarehouseAddress();
+    }
+
+    @Override
+    public void shippedToDelivery(DeliveryRequest request) {
+        warehouseService.shippedToDelivery(request);
+    }
+
+    @Override
+    public void acceptReturn(Map<UUID, Integer> products) {
+        warehouseService.acceptReturn(products);
+    }
+
+    @Override
+    public BookedProductsDto assemblyProductsForOrder(AssemblyRequest request) {
+        return warehouseService.assemblyProductsForOrder(request);
     }
 }

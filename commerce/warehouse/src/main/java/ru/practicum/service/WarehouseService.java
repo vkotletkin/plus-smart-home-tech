@@ -1,10 +1,11 @@
 package ru.practicum.service;
 
+import ru.practicum.delivery.DeliveryRequest;
 import ru.practicum.store.ShoppingCartDto;
-import ru.practicum.warehouse.AddProductToWarehouseRequest;
-import ru.practicum.warehouse.AddressDto;
-import ru.practicum.warehouse.BookedProductsDto;
-import ru.practicum.warehouse.NewProductInWarehouseRequest;
+import ru.practicum.warehouse.*;
+
+import java.util.Map;
+import java.util.UUID;
 
 public interface WarehouseService {
 
@@ -15,4 +16,10 @@ public interface WarehouseService {
     BookedProductsDto checkProductOnShoppingCart(ShoppingCartDto shoppingCartDto);
 
     AddressDto getWarehouseAddress();
+
+    void shippedToDelivery(DeliveryRequest request);
+
+    void acceptReturn(Map<UUID, Integer> products);
+
+    BookedProductsDto assemblyProductsForOrder(AssemblyRequest request);
 }

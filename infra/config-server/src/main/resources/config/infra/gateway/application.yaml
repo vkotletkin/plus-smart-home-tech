@@ -37,6 +37,18 @@ spring:
               args:
                 name: warehouseCB
                 fallbackUri: forward:/fallback/warehouse
+        - id: delivery_route
+          uri: lb://delivery
+          predicates:
+            - Path=/api/v1/delivery/**
+        - id: order_route
+          uri: lb://order
+          predicates:
+            - Path=/api/v1/order/**
+        - id: payment_route
+          uri: lb://payment
+          predicates:
+            - Path=/api/v1/payment/**
 
 resilience4j.circuitbreaker:
   instances:

@@ -37,5 +37,5 @@ public class ProductDto {
     @NotNull
     ProductCategory productCategory;
 
-    double price;
+    Double price;
 }
